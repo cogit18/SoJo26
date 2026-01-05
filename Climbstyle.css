@@ -1,0 +1,218 @@
+/*@font-face {
+    font-family: LogoFont;
+    src: url(fonts/Shrikhand-Regular.ttf);
+    font-display: swap;
+}*/        
+
+@font-face {
+    font-family: Lora;
+    src: url(fonts/Lora-Regular.ttf);
+    font-display: swap;
+}
+
+body {
+    background-image: url('images/background.svg?v1');
+    background-position-x: center;
+    background-position-y: bottom;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+}
+
+/*.logo {
+    font-family: LogoFont;
+    text-align: center;
+    font-weight: bolder;
+    font-size: large;
+}
+
+h1 {
+    font-family: LogoFont;
+}*/
+
+* {
+    font-family: Lora;
+}
+
+.content {
+    max-width: 313px;
+    margin: auto;
+}
+
+.wrappericon {
+    box-sizing: border-box;
+    padding: 5px;
+    width: 313px;
+    max-height: 56px;
+    border-radius: 28px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+.wrappericon .rowicon {
+    font-size: 0px;
+    text-align: center;
+}
+
+.wrappericon .rowicon * {
+}
+
+.wrappericon .row:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.wrappericon .icon {
+    display: inline-block;
+    height: 12%;
+    margin: 1%;
+    width: 12%;
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+}
+
+img.trans {
+    opacity: 0.3;
+}
+
+.wrapper {
+    box-sizing: border-box;
+    padding: 5px;
+    width: 100%;
+}
+
+.wrapper .row {
+    font-size: 0px;
+    text-align: center;
+}
+
+.wrapper .row * {
+    font-size: 12px;
+}
+
+.wrapper .row:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.wrapper .block {
+    background-color: rgb(255, 255, 255);
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .pblock {
+    background-color: #fff;
+    background-image: url('images/pipe.png');
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: contain;
+    position: relative;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .gblock {
+    background-color: #009f3d;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .bblock {
+    background-color: #0085c7;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .ggblock {
+    background-color: #999999;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .yblock {
+    background-color: #f4c300;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .rblock {
+    background-color: #df0024;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+
+    display: inline-block;
+    height: 16px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.wrapper .halfblock {
+    background-color: #999999;
+    color: #000;
+    text-align: center;
+    border: 1px solid black;
+    
+    display: inline-block;
+    height: 10px;
+    margin: 1px;
+    width: 30px;
+    overflow: hidden;
+}

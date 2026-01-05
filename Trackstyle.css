@@ -1,0 +1,107 @@
+/*@font-face {
+    font-family: LogoFont;
+    src: url(fonts/Shrikhand-Regular.ttf);
+    font-display: swap;
+}*/        
+
+@font-face {
+    font-family: Lora;
+    src: url(fonts/Lora-Regular.ttf);
+    font-display: swap;
+}
+
+body {
+    background-image: url('images/background.svg?v1');
+    background-position-x: center;
+    background-position-y: bottom;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+}
+
+/*.logo {
+    font-family: LogoFont;
+    text-align: center;
+    font-weight: bolder;
+    font-size: large;
+}
+
+h1 {
+    font-family: LogoFont;
+}*/
+
+* {
+    font-family: Lora;
+}
+
+.content {
+    max-width: 313px;
+    margin: auto;
+}
+
+.wrapper {
+    box-sizing: border-box;
+    padding: 5px;
+    width: 313px;
+    max-height: 56px;
+    border-radius: 28px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+.wrapper .row {
+    font-size: 0px;
+    text-align: center;
+}
+
+.wrapper .row * {
+}
+
+.wrapper .row:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.wrapper .icon {
+    display: inline-block;
+    height: 12%;
+    margin: 1%;
+    width: 12%;
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+}
+
+img.trans {
+    opacity: 0.3;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #FFFFFF;
+}
+
+td {
+    border: 1px solid black;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.entry {
+    min-width: 20px;
+    max-width: 20px;
+    cursor: pointer;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 14px;
+}
