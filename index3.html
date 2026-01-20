@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOJO 2026 - Curling, part II</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f0f0; margin: 0; padding-bottom: 50px; }
+        
+        /* Floating Header Logic */
+        #floating-header {
+            position: sticky; top: 0; width: 100%; background: #fff; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 10px 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        
+        #controls { display: flex; gap: 10px; margin-bottom: 8px; }
+        .mode-btn { padding: 12px 20px; font-size: 1rem; cursor: pointer; border: 2px solid #888; background: #eee; border-radius: 8px; }
+        .mode-btn.active { background: #4CAF50; color: white; border-color: #2E7D32; }
+        
+        #status-bar { display: flex; gap: 20px; font-size: 1.1rem; font-weight: bold; }
+        #board { display: grid; gap: 2px; background: #bbb; border: 5px solid #888; margin-top: 20px; user-select: none; }
+        
+        .cell {
+            width: 45px; height: 45px; background: #ddd; border: 1px solid #999;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer;
+        }
+        .cell.revealed { background: #eee; }
+        .cell.mine { background: red; animation: shake 0.2s; }
+        .cell.flagged::after { content: "🚩"; }
+        
+        #restart-container { margin-top: 20px; }
+        #restart-btn { padding: 12px 20px; font-size: 1.1rem; background: #ff4757; color: white; border: 2px solid #888; border-radius: 8px; cursor: pointer; display: none; }
+        
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+    </style>
+</head>
+<body>
+<h1>Curling, part II</h1>
+<p>Get sweeping!</p>
+    
+<div id="floating-header">
+        <div id="controls">
+            <button id="reveal-mode" class="mode-btn active" onclick="setMode('reveal')">⛏️ Reveal</button>
+            <button id="flag-mode" class="mode-btn" onclick="setMode('flag')">🚩 Flag</button>
+            <button id="restart-btn" class="mode-btn" onclick="startNewGame()">Restart</button>
+        </div>
+        <div id="status-bar">
+            <div>Mines: <span id="mine-count">0</span></div>
+            <div>Hint: <span id="hint-timer">03:00</span></div>
+        </div>
+    </div>
+
+    <div id="board"></div>
+
+    <script src="script3.js"></script>
+</body>
+</html>

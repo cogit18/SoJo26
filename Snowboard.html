@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <title>SoJo26 - Snowboarding</title>
+        <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+        <link rel="stylesheet" href="style.css">
+        <style>
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #FFFFFF;
+}
+
+td {
+    border: 1px solid black;
+}
+
+.gray {
+    min-width: 20px;
+    max-width: 20px;
+    background-color: lightgrey
+
+}
+
+.entry {
+    min-width: 20px;
+    max-width: 20px;
+    cursor: pointer;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 5px;
+    font-size: 14px;
+
+}
+
+.fill-cell img {
+  width: 100%;
+  height: 575px;
+  display: block; /* Removes extra space below the image */
+  object-fit: fill; /* Default behavior, but explicitly states the intent */
+}
+
+</style>
+    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <body>
+    <div class="content">
+        <img class="center" src="images/Olympic_Rings.svg">
+        <h1>Snowboarding Slopestyle</h1>
+        <div>Hint: <span id="hint-timer">03:00</span></div>
+    <p>Welcome to the Snowboarding Slopestyle event! <em>Zigzag</em> down the course to decipher the below message. Start with filling in just the left column.</p>
+    <p>SoetemloPrlpAVriinak</p>
+    <table>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td><td class="fill-cell" rowspan="20"><img src='images/Zigzag.png'></img></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+    </table>
+    <p></p>
+    <div class="wrapper">
+        <div class="row">
+            <div class="icon"><img src="images/Snowboard.svg"></div>
+            <div class="icon"><img class="trans" src="images/Skeleton.svg"></div>
+            <div class="icon"><img class="trans" src="images/Curling.svg"></div>
+            <div class="icon"><img class="trans" src="images/Biathlon.svg"></div>
+            <div class="icon"><img class="trans" src="images/SkiMountaineering.svg"></div>
+            <div class="icon"><img class="trans" src="images/ShortTrackSpeedSkating.svg"></div>
+            <div class="icon"><img class="trans" src="images/FreestyleSkiing.svg"></div>
+        </div>
+        </div>
+        </div>
+<script src="SnowTimer.js"></script>
+</body>
+</html>

@@ -80,28 +80,13 @@ img.center {
     width: 100px;
 }
 
+img.background {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 313px;
+}
+
 img.trans {
     opacity: 0.3;
-}
-
-table {
-    border-collapse: collapse;
-    background: #FFFFFF;
-}
-
-td {
-    cursor: pointer;
-    border: 1px solid black;
-    width: 25px;
-    height: 25px;
-    text-align: center;
-    font-size: 20px;
-}
-
-td.wl {
-    width:fit-content;
-}
-
-td.selected {
-    background: #F4C300;
 }

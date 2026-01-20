@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svg8" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" version="1.1" viewBox="0 0 567 567">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #1f3768;
+        stroke-miterlimit: 3.9;
+        stroke-width: 5.7px;
+      }
+    </style>
+  </defs>
+  <sodipodi:namedview id="namedview10" bordercolor="#666666" borderopacity="1" gridtolerance="10" guidetolerance="10" inkscape:current-layer="svg8" inkscape:cx="616.6479" inkscape:cy="283.5" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-height="1017" inkscape:window-maximized="1" inkscape:window-width="1920" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:zoom="1.2902734" objecttolerance="10" pagecolor="#ffffff" showgrid="false"/>
+  <path id="path2" class="cls-1" d="M213,207.6c20.3,3,95.3,23,113.1,33.8,22.4,13.6-5.2,137.3-8.9,168.9l-91.2,42.4c30-11.7,220.2-86.3,245.1-96,24.9-9.7,52-26.2,53.2-39.9"/>
+  <path id="path4" class="cls-1" d="M379.1,380.8s-31.8,5.7-54.7-20.6c-22.5-25.8-43.8-95.8-8-108.5,2.1,30.8-77.9,20.2-92.7,18.7-51-5.2-49.7-54.8-23.3-63.1-29.6,74.8-40.1,161.9-41.8,184-5.1,63,2.4,63,32.3,69.8"/>
+  <path id="path6" class="cls-1" d="M276.9,91.8c.5,5.2,2.9,9.6,7,11.7,4.1,2.1,8.9,1.5,13.4-1.1,5.4-3.1,10.3-8.2,13.7-14.9,7.4-14.4,4.8-30.5-5.7-35.8-8.6-4.4-19.8,0-27.6,9.6-3.5,4.6-7.1,10.4-11.1,17-21.8,36-41.1,83.6-41.1,83.6,39.1-44.1,26.2-50.9,14.9-50.9-33.1,0-59.6,25.3-56.6,45.4,4.6,31.6,65.3,47.9,82.2,48.7,38.2,1.9,14.5-21.7,14.5-21.7-24.2,44.2-93.2,193.4-156.7,278.2,15.6,9.4,48.2,9.4,48.2,9.4l-123.3,53.4s309.4-108.2,335.8-118.5,43.9-20.3,43.9-48.7l.6-225.1c-7.5,8.3-11.1,15.9-10.8,26.9,18.2-1.5,22.2-17.4,22.6-22.7.4-6.1-4.5-14.7-12.1-13.2,0,0-58.9,38.4-78.6,36.7-8.1-.7-52.6-4.1-70.2-38.5,37.4,7.1,4.8,53,4.8,53,0,0,69,33.8,119.5-17.9"/>
+</svg>
