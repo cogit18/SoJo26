@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>SoJo26 - Curling, Pt 2</title>
+        <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+        <link rel="stylesheet" href="style.css">
+        <style>
+            body { display: flex; flex-direction: column; align-items: center; margin: 0; padding-bottom: 50px; }
+
+            /* Floating Header Logic */
+            #floating-header {
+                position: sticky; top: 0; width: 100%; background: #fff; z-index: 100;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 10px 0;
+                display: flex; flex-direction: column; align-items: center;
+            }
+
+            #controls { display: flex; gap: 10px; margin-bottom: 8px; }
+            .mode-btn { padding: 12px 20px; font-size: 1rem; cursor: pointer; border: 2px solid #888; background: #fff; border-radius: 8px; }
+            .mode-btn.active { background: #009f3c; color: white; border-color: #009f3c; }
+
+            #status-bar { display: flex; gap: 20px; font-size: 1.1rem; font-weight: bold; }
+
+            #board { 
+                display: grid; 
+                width: 303px; /* 313px total including 5px borders */
+                background: #bbb; 
+                border: 5px solid #888; 
+                margin-top: 20px; 
+                user-select: none;
+                gap: 0; /* Remove gap to ensure even spacing */
+            }
+
+            .cell {
+                width: 37.875px; 
+                height: 37.875px; 
+                background: #ddd; 
+                border: 1px solid #999;
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                font-weight: bold; 
+                cursor: pointer;
+                box-sizing: border-box; /* Crucial for even spacing */
+            }
+            .cell.revealed { background: #eee; }
+
+            /* Styles for the revealed letters upon winning */
+            .cell.winner {
+                background: #df0024 !important;
+                color: #ffffff !important;
+                border: 1px solid #800000;
+            }
+
+            .cell.mine { background: #df0024; animation: shake 0.2s; }
+            .cell.flagged::after { content: "🚩"; }
+                        
+            #restart-container { margin-top: 20px; }
+            #restart-btn { padding: 12px 20px; font-size: 1.1rem; background: #df0024; color: white; border: 2px solid #888; border-radius: 8px; cursor: pointer; display: none; }
+
+            @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+        </style>
+</head>
+<body>
+    <div id="floating-header">
+        <div id="controls">
+            <button id="reveal-mode" class="mode-btn active" onclick="setMode('reveal')">⛏️ Reveal</button>
+            <button id="flag-mode" class="mode-btn" onclick="setMode('flag')">🚩 Flag</button>
+            <button id="restart-btn" class="mode-btn" onclick="startNewGame()">Restart</button>
+        </div>
+        <div id="status-bar">
+            <div>Mines: <span id="mine-count">0</span></div>
+            <div>Hint: <span id="hint-timer">03:00</span></div>
+        </div>
+    </div>
+    <div class="content">
+        <p></p>
+        <img class="center" src="images/Olympic_Rings.svg">
+        <h1>Curling, part II</h1>
+        <p>Get sweeping!</p>
+    <div id="board"></div>
+    <p></p>
+    <div class="wrapper">
+        <div class="row">
+            <div class="icon"><img class="trans" src="images/Snowboard.svg"></div>
+            <div class="icon"><img class="trans" src="images/Skeleton.svg"></div>
+            <div class="icon"><img src="images/Curling.svg"></div>
+            <div class="icon"><img class="trans" src="images/Biathlon.svg"></div>
+            <div class="icon"><img class="trans" src="images/SkiMountaineering.svg"></div>
+            <div class="icon"><img class="trans" src="images/ShortTrackSpeedSkating.svg"></div>
+            <div class="icon"><img class="trans" src="images/FreestyleSkiing.svg"></div>
+        </div>
+        </div>
+</div>
+    <script src="Curl2.js"></script>
+</body>
+</html>
