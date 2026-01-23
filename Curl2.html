@@ -14,7 +14,7 @@
             }
 
             #controls { display: flex; gap: 10px; margin-bottom: 8px; }
-            .mode-btn { padding: 12px 20px; font-size: 1rem; cursor: pointer; border: 2px solid #888; background: #fff; border-radius: 8px; }
+            .mode-btn { padding: 5px 5px; font-size: 1rem; cursor: pointer; border: 2px solid #888; background: #fff; border-radius: 8px; }
             .mode-btn.active { background: #009f3c; color: white; border-color: #009f3c; }
 
             #status-bar { display: flex; gap: 20px; font-size: 1.1rem; font-weight: bold; }
@@ -60,6 +60,7 @@
         </style>
 </head>
 <body>
+    <div class="content">
     <div id="floating-header">
         <div id="controls">
             <button id="reveal-mode" class="mode-btn active" onclick="setMode('reveal')">⛏️ Reveal</button>
@@ -71,7 +72,6 @@
             <div>Hint: <span id="hint-timer">03:00</span></div>
         </div>
     </div>
-    <div class="content">
         <p></p>
         <img class="center" src="images/Olympic_Rings.svg">
         <h1>Curling, part II</h1>
@@ -88,8 +88,8 @@
             <div class="icon"><img class="trans" src="images/ShortTrackSpeedSkating.svg"></div>
             <div class="icon"><img class="trans" src="images/FreestyleSkiing.svg"></div>
         </div>
-        </div>
-</div>
+    </div>
+    </div>
     <script src="Curl2.js"></script>
 </body>
 </html>
