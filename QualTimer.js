@@ -7,7 +7,7 @@ function startPersistentTimer() {
     hintInterval = setInterval(() => {
         if (timeRemaining <= 0) {
             clearInterval(hintInterval);
-            alert("Hint: See how each letter in the tables has a number? Start by filling out the blank numbers, then work on the missing letters in the last table. Watch the colors and match upper or lower case.");
+            alert("Hint: See how each letter in the tables has a number? Start by filling out the blank numbers, then work on the missing letters in the last table.");
             return;
         }
         timeRemaining--;
