@@ -3,13 +3,13 @@ const mineMap = [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, "A", 0, 0, 0, 0],
-    [0, "H", 0, 0, 0, "M", "S", 0],
-    [0, 0, 0, "E", 0, 0, 0, 0],
-    ["X", "S", 0, 0, 0, "O", 0, 0],
-    [0, 0, "O", 0, 0, 0, "N", 0],
+    [0, "X", 0, 0, 0, "E", "N", 0],
+    [0, 0, 0, "S", 0, 0, 0, 0],
+    ["M", "A", 0, 0, 0, "S", 0, 0],
+    [0, 0, "H", 0, 0, 0, "S", 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, "A", 0, 0, "J", 0, 0],
-    [0, 0, 0, 0, 0, 0, "S", 0],
+    [0, 0, "O", 0, 0, "J", 0, 0],
+    [0, 0, 0, 0, 0, 0, "O", 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0]
 ];
@@ -25,15 +25,29 @@ function setMode(mode) {
     document.getElementById('flag-mode').classList.toggle('active', mode === 'flag');
 }
 
+function showHint() {
+    alert("Hint: The medal is on the line; get bold for the gold. Run the game on another phone.");
+}
+
 function startPersistentTimer() {
     if (hintInterval) return; 
     const display = document.getElementById('hint-timer');
+
     hintInterval = setInterval(() => {
         if (timeRemaining <= 0) {
             clearInterval(hintInterval);
-            alert("💡 Hint: The medal is on the line; get bold for the gold. Run the game on another phone.");
+            
+            // 1. Show the initial alert
+            showHint();
+
+            // 2. Transform the timer span into a clickable button
+            display.innerHTML = `<button id="hint-button" style="cursor:pointer; padding: 2px 5px;">View Hint</button>`;
+            
+            // 3. Add event listener to the new button
+            document.getElementById('hint-button').addEventListener('click', showHint);
             return;
         }
+        
         timeRemaining--;
         let mins = Math.floor(timeRemaining / 60);
         let secs = timeRemaining % 60;
