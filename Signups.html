@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>SoJo26 | Signups</title>
+        <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+        <link rel="stylesheet" href="style.css">
+        <style>
+
+/* Spinner Animation */
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid var(--sojo-blue);
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loader {
+    flex-direction: column; /* Stacks spinner above the text */
+}
+
+        :root {
+            --sojo-blue: #0056b3;
+            --sojo-bg: #f4f7f9;
+            --card-white: #ffffff;
+            --text-dark: #1a1a1b;
+            --border-light: #e1e4e8;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            color: var(--text-dark);
+        }
+
+        header {
+            background: white;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 2px solid var(--sojo-blue);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .logo-container img { max-width: 180px; height: auto; }
+
+        .main-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+
+        .team-card {
+            background: var(--card-white);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .team-header {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .flag-img { width: 24px; height: 18px; margin-right: 10px; border: 1px solid #ddd; }
+
+        .slot-container { padding: 10px 15px; }
+
+        .slot-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dotted #eee;
+        }
+
+        .player-name { font-weight: 600; color: var(--sojo-blue); }
+
+        .btn-claim {
+            background-color: var(--sojo-blue);
+            color: white; border: none;
+            padding: 5px 12px; border-radius: 4px;
+            font-size: 0.75rem; font-weight: 600;
+            cursor: pointer;
+        }
+
+        #signup-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+
+        .modal-content {
+            background: white; padding: 25px;
+            border-radius: 12px; width: 90%; max-width: 400px;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 100%; padding: 12px; margin: 15px 0;
+            border: 1px solid #ccc; border-radius: 6px;
+        }
+
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+    <div class="spinner"></div>
+    <div id="loader-text">Saving...</div>
+</div>
+
+ <div class="content">
+        <br/>        
+        <img class="center" src="images/Olympic_Rings.svg">
+        <h1>Olympics Roster</h1>    
+        <div class="team-grid" id="grid">Fetching current roster...</div>
+
+<div id="signup-modal">
+    <div class="modal-content">
+        <h2 id="modal-title">Claim Spot</h2>
+        <input type="text" id="player-input" placeholder="Enter Player Name">
+        <div style="display:flex; gap: 10px;">
+            <button class="btn-claim" style="flex:1; padding:12px;" onclick="confirmSignup()">Confirm</button>
+            <button class="btn-claim" style="flex:1; padding:12px; background:#666;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // YOUR SPREADAPI / GOOGLE SCRIPT URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbx9jy2zaLN7HtDrlow-7hHTxeR_bztmQzG-mmWTnfhma46QZLCX9NOXD297wWvySC-Q/exec";
+    const SHEET_NAME = "signups";
+    
+    let appState = [];
+    let activeSelection = { teamName: null, slotKey: null };
+
+// Load Teams (GET)
+async function loadData() {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST', // SpreadAPI often processes GET requests via POST for compatibility
+            body: JSON.stringify({
+                method: "GET",
+                sheet: SHEET_NAME,
+                key: "" // Matches the UNSAFE("") in your script 
+            })
+        });
+        const result = await response.json();
+        appState = result.data; 
+        render();
+    } catch (error) {
+        console.error("Database Error:", error);
+        document.getElementById('grid').innerText = "Database offline. Check Sheet Name and Deployment.";
+    }
+}
+
+    function render() {
+        const grid = document.getElementById('grid');
+        if (!appState.length) return;
+
+        grid.innerHTML = appState.map((team) => `
+            <div class="team-card">
+                <div class="team-header">
+                    <img class="flag-img" src="https://flagcdn.com/w40/${getCountryCode(team.Team)}.png" alt="">
+                    ${team.Team}
+                </div>
+                <div class="slot-container">
+                    ${[1,2,3,4,5,6].map(num => {
+                        const player = team[`Slot${num}`];
+                        return `
+                            <div class="slot-row">
+                                <span class="slot-num">#${num}</span>
+                                ${player ? 
+                                    `<span class="player-name">${player}</span>` : 
+                                    `<button class="btn-claim" onclick="openModal('${team.Team}', 'Slot${num}')">CLAIM</button>`}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function getCountryCode(name) {
+        const mapping = {"United States":"us", "Canada":"ca", "Japan":"jp", "Italy":"it", "France":"fr", "Germany":"de", "United Kingdom":"gb", "Australia":"au", "Brazil":"br", "South Korea":"kr", "Mexico":"mx", "Spain":"es", "Netherlands":"nl", "Sweden":"se", "Norway":"no", "Argentina":"ar", "Chile":"cl", "New Zealand":"nz"};
+        return mapping[name] || 'un';
+    }
+
+   function openModal(teamName, slotKey) {
+    activeSelection = { teamName, slotKey };
+    
+    // Fix: Force the text entry field to be blank every time a modal opens
+    document.getElementById('player-input').value = '';
+    
+    document.getElementById('modal-title').innerText = `Claim ${slotKey} for ${teamName}`;
+    document.getElementById('signup-modal').style.display = 'flex';
+    
+    // Focus the input automatically for better mobile UX
+    setTimeout(() => document.getElementById('player-input').focus(), 100);
+
+    }
+
+    function closeModal() { document.getElementById('signup-modal').style.display = 'none'; }
+
+// Update Slot (PUT)
+async function confirmSignup() {
+    const name = document.getElementById('player-input').value.trim();
+    if(!name) return alert("Please enter a name");
+
+    const loader = document.getElementById('loader');
+    loader.style.display = 'flex';
+    closeModal();
+
+    const teamObj = appState.find(t => t.Team === activeSelection.teamName);
+    
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                method: "PUT",
+                sheet: SHEET_NAME,
+                id: teamObj._id, // Tracks row by _id 
+                key: "", // Authorized via UNSAFE anonymous [cite: 4, 13]
+                payload: {
+                    [activeSelection.slotKey]: name
+                }
+            })
+        });
+        
+        if (!response.ok) throw new Error("Server error");
+
+        // Wait for Google's cache to catch up 
+        setTimeout(async () => {
+            await loadData();
+            loader.style.display = 'none';
+        }, 1500);
+        
+    } catch (error) {
+        console.error("Update failed:", error);
+        alert("Update failed. Please check your connection.");
+        loader.style.display = 'none';
+    }
+}
+    loadData();
+</script>
+<div class="wrapper">
+        <div class="row">
+            <div class="icon"><img src="images/Snowboard.svg"></div>
+            <div class="icon"><img src="images/Skeleton.svg"></div>
+            <div class="icon"><img src="images/Curling.svg"></div>
+            <div class="icon"><img src="images/Biathlon.svg"></div>
+            <div class="icon"><img src="images/SkiMountaineering.svg"></div>
+            <div class="icon"><img src="images/ShortTrackSpeedSkating.svg"></div>
+            <div class="icon"><img src="images/FreestyleSkiing.svg"></div>
+        </div>
+        </div>
+</div>
+<br/>
+</body>
+</html>
