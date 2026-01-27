@@ -18,6 +18,14 @@ const mineMap = [
 let clickMode = 'reveal';
 let timeRemaining = 180; 
 let hintInterval = null;
+let puzzleSolved = false; // New state to track victory
+
+// Modal Logic References
+const congratsModal = document.getElementById("congratsModal");
+const hintModal = document.getElementById("hintModal");
+const closeCongratsBtn = document.getElementById("closeCongrats");
+const closeHintBtn = document.getElementById("closeHint");
+const viewCongratsBtn = document.getElementById("viewCongratsBtn");
 
 function setMode(mode) {
     clickMode = mode;
@@ -26,7 +34,13 @@ function setMode(mode) {
 }
 
 function showHint() {
-    alert("Hint: The medal is on the line; get bold for the gold. Run the game on another phone.");
+    hintModal.style.display = "block";
+}
+
+function transformTimerToButton() {
+    const display = document.getElementById('hint-timer');
+    display.innerHTML = `<button id="hint-button" style="cursor:pointer; padding: 2px 5px;">View Hint</button>`;
+    document.getElementById('hint-button').addEventListener('click', showHint);
 }
 
 function startPersistentTimer() {
@@ -36,24 +50,41 @@ function startPersistentTimer() {
     hintInterval = setInterval(() => {
         if (timeRemaining <= 0) {
             clearInterval(hintInterval);
-            
-            // 1. Show the initial alert
-            showHint();
-
-            // 2. Transform the timer span into a clickable button
-            display.innerHTML = `<button id="hint-button" style="cursor:pointer; padding: 2px 5px;">View Hint</button>`;
-            
-            // 3. Add event listener to the new button
-            document.getElementById('hint-button').addEventListener('click', showHint);
+            if (!puzzleSolved) {
+                showHint();
+            }
+            transformTimerToButton();
             return;
         }
-        
         timeRemaining--;
         let mins = Math.floor(timeRemaining / 60);
         let secs = timeRemaining % 60;
         display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }, 1000);
 }
+
+// Updated Modal closing logic to ensure it only runs if elements exist
+document.addEventListener('DOMContentLoaded', () => {
+    // Modal Logic References
+    const congratsModal = document.getElementById("congratsModal");
+    const hintModal = document.getElementById("hintModal");
+    const closeCongratsBtn = document.getElementById("closeCongrats");
+    const closeHintBtn = document.getElementById("closeHint");
+    const viewCongratsBtn = document.getElementById("viewCongratsBtn");
+
+    if (closeCongratsBtn) closeCongratsBtn.onclick = () => { congratsModal.style.display = "none"; }
+    if (closeHintBtn) closeHintBtn.onclick = () => { hintModal.style.display = "none"; }
+    window.onclick = (event) => {
+        if (event.target == congratsModal) congratsModal.style.display = "none";
+        if (event.target == hintModal) hintModal.style.display = "none";
+    }
+    if (viewCongratsBtn) viewCongratsBtn.onclick = () => { congratsModal.style.display = "block"; }
+
+    startPersistentTimer();
+    startNewGame();
+});
+
+viewCongratsBtn.onclick = () => { congratsModal.style.display = "block"; }
 
 class Minesweeper {
     constructor(map) {
@@ -180,8 +211,21 @@ class Minesweeper {
 
     triggerWin() {
         this.gameOver = true;
-        // The revealAllMines() call in reveal() handles the text/background change
-        setTimeout(() => alert("🪓🎯 Victory! Unscramble the mine field to know where to go next."), 100);
+        puzzleSolved = true; 
+
+        // 1. Handle Timer Logic (Silent stop and transform to button)
+        if (hintInterval) {
+            clearInterval(hintInterval);
+            timeRemaining = 0; 
+            transformTimerToButton(); 
+        }
+
+        // 2. Show UI Elements
+        const congratsModal = document.getElementById("congratsModal");
+        const viewCongratsBtn = document.getElementById("viewCongratsBtn");
+        
+        if (congratsModal) congratsModal.style.display = "block";
+        if (viewCongratsBtn) viewCongratsBtn.style.display = "inline-block";
     }
 }
 

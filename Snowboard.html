@@ -16,29 +16,90 @@ td {
 }
 
 .gray {
-    min-width: 20px;
-    max-width: 20px;
+    min-width: 18px;
     background-color: lightgrey
 
 }
 
+input {
+    text-align: center;
+    width: 18px;
+    font-size: 11px;
+}
+
 .entry {
-    min-width: 20px;
-    max-width: 20px;
+    min-width: 18px;
     cursor: pointer;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
-    padding: 5px;
-    font-size: 14px;
 
 }
 
 .fill-cell img {
-  width: 100%;
-  height: 575px;
-  display: block; /* Removes extra space below the image */
-  object-fit: fill; /* Default behavior, but explicitly states the intent */
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain; /* Ensures the image fits without distortion */
+}
+
+/* Add this to ensure the cells stay compact */
+.entry, .gray {
+    height: 14px; /* Adjust this value to your preferred row height */
+    padding: 1px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 500px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#viewCongratsBtn {
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #009f3c;
+    color: white;
+    border: 1px solid black; /* Added black border */
+    border-radius: 5px;
+    display: none; /* Hidden until solved */
 }
 
 </style>
@@ -49,30 +110,49 @@ td {
         <img class="center" src="images/Olympic_Rings.svg">
         <h1>Snowboarding Slopestyle</h1>
         <div>Hint: <span id="hint-timer">03:00</span></div>
-    <p>Welcome to the Snowboarding Slopestyle event! <em>Zigzag</em> down the course to decipher the below message. Start with filling in just the left column.</p>
+    <p>Welcome to the Snowboarding Slopestyle event! <em>Zigzag</em> down the course to decipher the below message.</p>
     <p>SoetemloPr lpAVriinak</p>
-    <table>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td><td class="fill-cell" rowspan="20"><img src='images/Zigzag.png'></img></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
-      <tr><td class="entry"><div contenteditable="true"></div></td><td class="gray"></td></tr>
-      <tr><td class="gray"></td><td class="entry"><div contenteditable="true"></div></td></tr>
+    <table id="targetTable">
+      <tr><td class="entry"><input type='text' data-answer='s' style="text-transform: uppercase;"></td><td class="gray"></td><td class="fill-cell" rowspan="20"><img src='images/Zigzag.png'></img></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='l' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='o' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='p' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='e' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='a' style="text-transform: uppercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='t' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='v' style="text-transform: uppercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='e' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='r' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='m' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='i' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='l' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='i' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='o' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='n' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='p' style="text-transform: uppercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='a' style="text-transform: lowercase;"></td></tr>
+      <tr><td class="entry"><input type='text' data-answer='r' style="text-transform: lowercase;"></td><td class="gray"></td></tr>
+      <tr><td class="gray"></td><td class="entry"><input type='text' data-answer='k' style="text-transform: lowercase;"></td></tr>
     </table>
+<div style="text-align: center; margin-top: 20px;">
+    <button id="viewCongratsBtn" style="display: none; padding: 10px 20px; cursor: pointer; background-color: #009f3c; color: white; border: 1px solid black; border-radius: 5px;">View Congrats Message</button>
+</div>
+<div id="congratsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeCongrats">&times;</span>
+        <h2>Event Complete!</h2>
+        <p>Congratulations! You've mastered the Slopestyle course.</p>
+        <p>Decipher the message and figure out where togo. Drop one brave team member at the top of the hill with the beach towel; everyone else should drive around and park at the bottom of the hill.</p>
+    </div>
+</div>
+
+<div id="hintModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeHint">&times;</span>
+        <h2>Hint</h2>
+        <p>See the space in the cipher text? The text before the space all goes in the first column; after the space in the second column. Read the message in a zigzag pattern.</p>
+    </div>
+</div>
     <p></p>
     <div class="wrapper">
         <div class="row">

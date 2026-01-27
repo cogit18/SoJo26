@@ -18,13 +18,15 @@ td {
     overflow: hidden;
     white-space: nowrap;
     font-size: 14px;
-    padding: 2px;
+    padding: 1px;
 
 }
 
 input {
     text-align: center;
     width: 20px;
+    text-transform: uppercase;
+    
 }
 
 .gray {
@@ -36,6 +38,59 @@ input {
     cursor: pointer;
 
 }
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 500px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#viewCongratsBtn {
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #009f3c;
+    color: white;
+    border: 1px solid black; /* Added black border */
+    border-radius: 5px;
+    display: none; /* Hidden until solved */
+}
         </style>
     </head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,19 +101,21 @@ input {
         <div>Hint: <span id="hint-timer">03:00</span></div>
     <p>Welcome to the Olympic Qualifiers! You Know the <em>when</em>&mdash;now it's time to find the <em>where</em>.</p>
     <p><table><tr><td>C</td><td>L</td><td>I</td><td>C</td><td>K</td><td>/</td><td>T</td><td>A</td><td>P</td><td> </td><td>E</td><td>A</td><td>C</td><td>H</td>
-        <tr><td>1</td><td>2</td><td>3</td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td>
-        </table></p><p><table><tr><td>S</td><td>P</td><td>A</td><td>C</td><td>E</td><td> </td><td>T</td><td>O</td><td> </td><td>T</td><td>Y</td><td>P</td><td>E</td><td>.</td>
-        <tr><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td>
+        <tr><td><input type='text' maxlength="1" placeholder="1"></td><td><input type='text' maxlength="1" placeholder="2"></td><td><input type='text' maxlength="1" placeholder="3"></td><td><input type='text' maxlength="1"></td><td><input type='text' maxlength="1"></td><td><input type='text' maxlength="1"></td><td><input type='text' maxlength="1"></td><td><input type='text' maxlength="1"></td><td><input type='text' maxlength="1"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td>
+        </table></p><p><table><tr><td>F</td><td>I</td><td>E</td><td>L</td><td>D</td><td> </td><td>T</td><td>O</td><td> </td><td>T</td><td>Y</td><td>P</td><td>E</td><td>.</td>
+        <tr><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td>
         </table></p><p><table><tr><td>M</td><td>I</td><td>N</td><td>D</td><td> </td><td>T</td><td>H</td><td>E</td><td> </td><td>C</td><td>A</td><td>P</td><td>S</td><td>.</td>
-        <tr><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td><td><div contenteditable="true"></div></td></tr></tr></table>
+        <tr><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td><td><input type='text' maxlength="2"></td></tr></tr></table>
         
         <p><table id="targetTable"><tr><td><input type='text' data-answer='T'></td><td><input type='text' data-answer='I'></td><td><input type='text' data-answer='N'></td><td><input type='text' data-answer='Y'></td><td><input type='text' data-answer='.'></td><td><input type='text' data-answer='C'></td><td><input type='text' data-answer='C'></td><td><input type='text' data-answer='/'></td><td><input type='text' data-answer='C'></td><td><input type='text' data-answer='H'></td><td><input type='text' data-answer='A'></td><td><input type='text' data-answer='M'></td><td><input type='text' data-answer='P'></td><td><input type='text' data-answer='S'></td>
         <tr><td>7</td><td>3</td><td>31</td><td>25</td><td>28</td><td>1</td><td>4</td><td>6</td><td>13</td><td>35</td><td>8</td><td>29</td><td>16</td><td>15</td>
         </table></p>
-<p><div id="linkContainer" style="background-color:#FFFFFF; border: 1px solid black; padding: 5px;">
-    <strong>Final Link: </strong><br/>
-    <a id="dynamicLink" href="HTTPS://" target="_blank">HTTPS://</a>
-  </div></p>    
+
+    <!-- Success Button Placeholder -->
+    <div style="text-align: center;">
+        <button id="viewCongratsBtn">View Congrats Message</button>
+    </div>
+
     <div class="wrapper">
         <div class="row">
             <div class="icon"><img src="images/Snowboard.svg"></div>
@@ -69,8 +126,27 @@ input {
             <div class="icon"><img src="images/ShortTrackSpeedSkating.svg"></div>
             <div class="icon"><img src="images/FreestyleSkiing.svg"></div>
         </div>
+    </div>
+    </div>
+
+    <!-- The Congrats Modal -->
+    <div id="congratsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeCongrats">&times;</span>
+            <h2>Congratulations!</h2>
+            <p>You have found the next clue! <a id="modalLink" href="#" target="_blank"></a></p>
         </div>
+    </div>
+
+    <!-- The Hint Modal -->
+    <div id="hintModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeHint">&times;</span>
+            <h2>Hint</h2>
+            <p>See how each letter in the tables has a number? Start by filling out the blank numbers, then work on the missing letters in the last table.</p>
         </div>
+    </div>
+
 <script src="QualTimer.js?v=1"></script>
 </body>
 </html>
