@@ -1,3 +1,10 @@
+function setViewportScale(scale) {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        viewport.setAttribute('content', `width=device-width, initial-scale=${scale}, maximum-scale=${scale}`);
+    }
+}
+
 let timeRemaining = 180; // 3:00 minutes
 let hintInterval = null;
 let puzzleSolved = false;
@@ -12,6 +19,7 @@ const modalLink = document.getElementById("modalLink");
 
 // Function to show the hint
 function showHint() {
+    setViewportScale(1); // Reset zoom
     hintModal.style.display = "block";
 }
 
@@ -111,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 2. Setup and Show Congrats
+            setViewportScale(1);
             modalLink.href = finalURL;
             modalLink.textContent = finalURL;
             congratsModal.style.display = "block";
