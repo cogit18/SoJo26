@@ -59,6 +59,34 @@ viewCongratsBtn.onclick = () => { congratsModal.style.display = "block"; }
 document.addEventListener('DOMContentLoaded', () => {
     startPersistentTimer();
     const table = document.getElementById('targetTable');
+
+        // --- MOBILE-OPTIMIZED AUTO-TABBING ---
+const globalInputs = document.querySelectorAll('input[type="text"]');
+globalInputs.forEach((input, index) => {
+    // Listen for 'input' to catch text changes
+    input.addEventListener('input', (e) => {
+        const value = input.value;
+        const max = parseInt(input.getAttribute('maxlength'));
+
+        if (value.length >= max) {
+            const nextInput = globalInputs[index + 1];
+            if (nextInput) {
+                // Short delay helps iOS handle the focus shift while the keyboard is active
+                setTimeout(() => nextInput.focus(), 10);
+            }
+        }
+    });
+
+    // Backspace logic for mobile
+    input.addEventListener('keydown', (e) => {
+        if (e.key === "Backspace" && input.value === "") {
+            const prevInput = globalInputs[index - 1];
+            if (prevInput) {
+                setTimeout(() => prevInput.focus(), 10);
+            }
+        }
+    });
+});
     
     table.addEventListener('input', function() {
         let allCorrect = true;
