@@ -139,3 +139,57 @@ img.trans {
     border-radius: 5px;
     display: none; /* Hidden until won */
 }
+
+body { display: flex; flex-direction: column; align-items: center; margin: 0; padding-bottom: 50px; }
+
+/* Floating Header Logic */
+#floating-header {
+    position: sticky; top: 0; width: 100%; background: #fff; z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 10px 0;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+#controls { display: flex; gap: 10px; margin-bottom: 8px; }
+.mode-btn { padding: 5px 5px; font-size: 1rem; cursor: pointer; border: 2px solid #888; background: #fff; border-radius: 8px; }
+.mode-btn.active { background: #009f3c; color: white; border-color: #009f3c; }
+
+#status-bar { display: flex; gap: 20px; font-size: 1.1rem; font-weight: bold; }
+
+#board { 
+    display: grid; 
+    width: 303px; /* 313px total including 5px borders */
+    background: #bbb; 
+    border: 5px solid #888; 
+    margin-top: 20px; 
+    user-select: none;
+    gap: 0; /* Remove gap to ensure even spacing */
+}
+
+.cell {
+    width: 37.875px; 
+    height: 37.875px; 
+    background: #ddd; 
+    border: 1px solid #999;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    cursor: pointer;
+    box-sizing: border-box; /* Crucial for even spacing */
+}
+.cell.revealed { background: #eee; }
+
+/* Styles for the revealed letters upon winning */
+.cell.winner {
+    background: #df0024 !important;
+    color: #ffffff !important;
+    border: 1px solid #800000;
+}
+
+.cell.mine { background: #df0024; animation: shake 0.2s; }
+.cell.flagged::after { content: "🚩"; }
+            
+#restart-container { margin-top: 20px; }
+#restart-btn { padding: 12px 20px; font-size: 1.1rem; background: #df0024; color: white; border: 2px solid #888; border-radius: 8px; cursor: pointer; display: none; }
+
+@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
