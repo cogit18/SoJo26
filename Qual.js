@@ -84,6 +84,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = document.getElementById('targetTable');
     const baseURL = "HTTPS://";
 
+    // --- AUTO-TABBING LOGIC START ---
+    const globalInputs = document.querySelectorAll('input[type="text"]');
+    globalInputs.forEach((input, index) => {
+        input.addEventListener('input', () => {
+            // If the user entered a character and reached the limit
+            if (input.value.length >= input.maxLength) {
+                const nextInput = globalInputs[index + 1];
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        });
+
+        // Optional: Backspace to previous input
+        input.addEventListener('keydown', (e) => {
+            if (e.key === "Backspace" && input.value === "") {
+                const prevInput = globalInputs[index - 1];
+                if (prevInput) {
+                    prevInput.focus();
+                }
+            }
+        });
+    });
+    // --- AUTO-TABBING LOGIC END ---
+
     table.addEventListener('input', function() {
         let combinedString = "";
         let allCorrect = true;
