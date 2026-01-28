@@ -102,17 +102,18 @@ td {
     min-width: 14px;
     max-width: 14px;
     text-align: center;
+    vertical-align: middle;
     overflow: hidden;
     white-space: nowrap;
-    font-size: 14px;
     padding: 1px;
 
 }
 
 input {
     text-align: center;
-    width: 20px;
+    font-size: 0.7em;
     text-transform: uppercase;
+    width: 0.9em 
     
 }
 
