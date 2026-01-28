@@ -110,7 +110,7 @@ td {
 input {
     text-align: center;
     width: 18px;
-    font-size: 11px;
+    font-size: .7em;
 }
 
 .entry {

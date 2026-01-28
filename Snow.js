@@ -1,3 +1,10 @@
+function setViewportScale(scale) {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        viewport.setAttribute('content', `width=device-width, initial-scale=${scale}, maximum-scale=${scale}`);
+    }
+}
+
 let timeRemaining = 180; // 3:00 minutes
 let hintInterval = null;
 let puzzleSolved = false;
