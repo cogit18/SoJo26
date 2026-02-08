@@ -3,23 +3,161 @@
 <head>
     <meta charset="utf-8">
     <title>SoJo24 Recap</title>
+    <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
+    <style>
+.spoiler {
+    background: #000;
+    color: #000;
+    border-radius: 6px;
+    padding: 1px 10px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    user-select: none;
+}
+
+.spoiler-revealed {
+    background: none;
+    color: #999;
+    transition: background 0.3s, color 0.3s;
+}
+
+.content {
+  background-color: rgba(255,255,255,0.9);
+  padding: 10px;
+}
+
+h3 {
+  margin-top: 50px;    /* Adds 40 pixels of space before the h3 */
+  margin-bottom: -10px; /* Adds 10 pixels of space after the h3 */
+}
+
+.section-content {
+  transition: max-height 0.3s, opacity 0.3s;
+  overflow: hidden;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.section.collapsed .section-content {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.collapsible {
+  cursor: pointer;
+  user-select: none;
+}
+
+    </style>
 </head>
 <body>
     <header>
-        <nav style="display:flex;justify-content:center;gap:1rem;padding:10px;background:#f7f7f7;border-bottom:1px solid #ddd;font-family:Arial,Helvetica,sans-serif;">
-            <a href="index.html">Home</a>
-            <a href="https://cogit18.github.io/SoJo26/Qual.html">Qualifiers</a>
-            <a href="https://cogit18.github.io/SoJo26/Signups.html">Roster</a>
+        <nav style="display:flex;justify-content:center;gap:1rem;padding:10px;background:#f7f7f7;border-bottom:1px solid #ddd;">
+            <a href="index.html">2026 Invite</a>
+            <a href="Qual.html">Qualifiers</a>
+            <a href="Signups.html">Roster</a>
+            <a href="SoJo24Recap.html">SoJo24 Recap</a>
             <a href="faq.html">FAQ</a>
         </nav>
     </header>
     <div class="content">
-        <p>
-    <img class="center" src="images/Olympic_Rings.svg"></p>
         <h1>SoJo24 Recap</h1>
-        <p>This page is a placeholder for the SoJo24 recap. Add content when ready.</p>
+        <p>Click on each section header to expand and collapse it. Click on the black highlights to see spoilers.</p>
+        <div class="section collapsed">
+        <h3 class="collapsible">>Qualifiers: Wordsearch</h3>
+        <div class="section-content">
+        <p>Link: <a href="https://cogit18.github.io/SoJo24/Word" target="_blank">Qualifiers</a></p>
+        <p>We kicked things off at a local park in South Jordan. To find the location, competitors completed a wordsearch and read between the lines to <span id="spoiler">get the What3Words app and look up <a href="http://what3words.com/push.gold.speech" target="_blank">///push.gold.speech</a> to go to River Heights Park.</span></p>
+        </div></div>
+        <div class="section collapsed">
+            <h3 class="collapsible">>Opening Ceremonies: Academic Pentathalon</h3>
+            <div class="section-content">
+        <p>Link: <a href="https://cogit18.github.io/SoJo24/Open" target="_blank">Opening Ceremonies</a></p>
+            <p>After some quick rules (we will not be paying your speeding tickets; South Jordan PD doesn't care that you are racing; don't speed, especially in neighborhoods), then we let everyone loose.</p>
+        <p>Competitors raced across the park to scan a QR code hidden in the tree, then searched the playground for an envelope of <a href="files/Pentathlon_Combined.pdf" target="_blank">Academic Pentathalon puzzles</a>.</p>
+        <p>Puzzle answers make GPS coordinates: <span id="spoiler">40.56345, -111.98712.</span></p>
+    </div></div>
+    <div class="section collapsed">
+        <h3 class="collapsible">>Track and Field: "Book Cipher"</h3>
+            <div class="section-content">
+                <p>Link: <a href="https://cogit18.github.io/SoJo24/Track" target="_blank">Track and Field</a></p>
+                <p>There was anothe QR hidden in the tree at the coordinates.</p>
+                <p>Do a lap and solve the "book cipher" to get the website <span id="spoiler">tiny.cc/marksetgocrosscountryrace.</span></p>
+            </div>
     </div>
+    <div class="section collapsed">
+        <h3 class="collapsible">>Cross Country: Substitution Cipher</h3>
+            <div class="section-content">
+                <p>Link: <a href="https://cogit18.github.io/SoJo24/Cross" target="_blank">Cross Country</a></p>
+                <p>Race to Monte Vista Elementary School playground, look for each state and read the <a href="https://simplemaps.com/custom/us/CZlnNBTB" target="_blank">chalk letters on the map</a> to get the message: <span id="spoiler">unboxtheracedayspecialfromlocalcookieco</span></p>
+            </div>
+    </div>
+    <div class="section collapsed">
+        <h3 class="collapsible">>Boxing: Local Cookie Co</h3>
+            <div class="section-content">
+                <p><a href="https://cogit18.github.io/SoJo24/Box" target="_blank">Boxing</a></p>
+                <p>Go to Local Cookie Co and buy the raceday special, which had a card with a QR and image:</p>
+                <p><img src="images/BoxingQR.png"></p>
+                <p>Complete the Connections game, reference the logo on the business card, make your way to <span id="spoiler">the What3Words location <a href="http://what3words.com/dash.length.upset" target="_blank">///dash.length.upset</a> at Overlook Park.</span></p>
+            </div>
+        </div>
+    <div class="section collapsed">
+        <h3 class="collapsible">>Archery: Connections</h3>
+        <div class="section-content">
+        <p>Link: <a href="https://cogit18.github.io/SoJo24/Arch" target="_blank">Archery</a></p>
+        <p>There was anothee QR hidden in the tree at the coordinates. Competitors followed the directions to go find the target.</p>
+        <p><img src="images/Arch.png" width="100%"></p>
+        </div>
+    </div>
+    <div class="section collapsed">
+        <h3 class="collapsible">>Fencing: Crossword</h3>
+        <div class="section-content">
+        <p>Link: <a href="https://cogit18.github.io/SoJo24/Fence" target="_blank">Fencing</a></p>
+        <p>Finish the crossword, interpret the What3Words reference, and head to <span id="spoiler"><a href="http://what3words.com/hedge.lease.chill" target="_blank">///hedge.lease.chill</a>.</span></p>
+        </div>
+    </div>
+    <div class="section collapsed">
+        <h3 class="collapsible">>Fencing for the Blind: Braille</h3>
+        <div class="section-content">
+        <p>Link: <a href="https://cogit18.github.io/SoJo24/Fence2" target="_blank">Fencing for the Blind</a></p>
+        <p><img src="images/Fence2.png" width="100%"></p>
+        <p>Interpret the sign at the location and tune to <span id="spoiler">88.5 FM</span> to hear the clue: <a href="files/FencingfortheBlind.mp3" target="_blank">audio</a>.</p>
+        <p>Read the <a href="https://docs.google.com/spreadsheets/d/1lHYk2P-IFDMI99KjKBYvkaXx73wkccIvIt9we_HYoVw/edit?usp=sharing" target="_blank"> Braille markers on the fence</a> and head to <span id="spoiler"><a href="http://what3words.com/flips.callers.tonics" target="_blank">///flips.callers.tonics</a>.</span></p>
+        </div>
+        </div>
+        <div class="section collapsed">
+            <h3 class="collapsible">>Sport Climbing: Number Tower</h3>
+        <div class="section-content">
+            <p>Link: <a href="https://cogit18.github.io/SoJo24/Climb" target="_blank">Sport Climbing</a></p>
+            <p>The wall was marked like the below, and there was a QR code attached to the fence above. Note the colors on the wall </p>
+        <p><img src="images/Rock.jpg" width="100%"></p>
+        <p>I don't own the phone number amymore, so don't call it. But this is the voice message: <a href="files/MedalCount.mp3" target="_blank">audio</a>.</p>
+        <p>Text the final correct answer <span id="spoiler">2599</span> and we would send the rest of the address for the finish line.</p>
+        </div></div>
+        <p></p>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('span#spoiler').forEach(function(spoilerSpan) {
+                const original = spoilerSpan.innerHTML;
+                spoilerSpan.innerHTML = "...tap to reveal spoiler";
+                spoilerSpan.classList.add('spoiler');
+                spoilerSpan.onclick = function() {
+                    spoilerSpan.innerHTML = original;
+                    spoilerSpan.classList.remove('spoiler');
+                    spoilerSpan.classList.add('spoiler-revealed');
+                };
+            });
+        });
+        document.querySelectorAll('.collapsible').forEach(h3 => {
+  h3.addEventListener('click', function() {
+    const section = h3.parentElement;
+    section.classList.toggle('collapsed');
+  });
+});
+        </script>
 </body>
 </html>

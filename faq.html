@@ -3,23 +3,90 @@
 <head>
     <meta charset="utf-8">
     <title>FAQ - SoJo26</title>
+    <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .content {
+  background-color: rgba(255,255,255,0.9);
+  padding: 10px;
+}
+
+h3 {
+  margin-top: 50px;    /* Adds 40 pixels of space before the h3 */
+  margin-bottom: -10px; /* Adds 10 pixels of space after the h3 */
+}
+
+.section-content {
+  transition: max-height 0.3s, opacity 0.3s;
+  overflow: hidden;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.section.collapsed .section-content {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.collapsible {
+  cursor: pointer;
+  user-select: none;
+}
+    </style>
 </head>
 <body>
     <header>
         <nav style="display:flex;justify-content:center;gap:1rem;padding:10px;background:#f7f7f7;border-bottom:1px solid #ddd;font-family:Arial,Helvetica,sans-serif;">
-            <a href="index.html">Home</a>
-            <a href="https://cogit18.github.io/SoJo26/Qual.html">Qualifiers</a>
-            <a href="https://cogit18.github.io/SoJo26/Signups.html">Roster</a>
+            <a href="index.html">2026 Invite</a>
+            <a href="Qual.html">Qualifiers</a>
+            <a href="Signups.html">Roster</a>
             <a href="SoJo24Recap.html">SoJo24 Recap</a>
+            <a href="faq.html">FAQ</a>
         </nav>
     </header>
     <div class="content">
         <p>
     <img class="center" src="images/Olympic_Rings.svg"></p>
         <h1>FAQ</h1>
-        <p>This page is a placeholder. Add your frequently asked questions here.</p>
+        <p>Click on each section header to expand and collapse it.</p>
+        <div class="section collapsed">
+            <h3 class="collapsible">>Q: $30 per person?! Why so much?</h3>
+            <div class="section-content">
+                <p>A: The first year we did this in 2018, we hoped to break even on over $1,000 in expenses, and we <i>ONLY</i> lost $35 when all was said and done. Considering we did a full catered dinner for 70 people, that felt pretty good.</p>
+                <p>This year we aren't doing a dinner, but we have almost as many planned expenses with paid venues and activities that are going to really surprise and delight. Ask someone who ran it in 2024 if it is worth the cost.</p>
+            </div>
+        </div>
+        <div class="section collapsed">
+            <h3 class="collapsible">>Q: How difficult will it be?</h3>
+            <div class="section-content">
+                <p>A: Check out the <a href="SoJo24Recap.html">2024 recap</a> to see the challenges from last time. For 2026 we added a delayed hint to every mental challenge, and there is validation with colors to let you know you're on the right track. You can see an example of that with this year's <a href="Qual.html">Qualifiers</a>.</p>
+                <p>Puzzles aren't fun unless they push you; they just become tedious. Monotony instead of accomplishment. At the same time, I don't want teams to be stuck early on and get discouraged. So we are striking a balance this year: you are rewarded for getting a headstart, and everyone is helped along the way.</p>
+            </div>
+        </div>
+        <div class="section collapsed">
+            <h3 class="collapsible">>Q: How much physical activity is required?</h3>
+            <div class="section-content">
+                <p>A: Teams that run will have an advantage. Do you have to run? No; just have fun.</p>
+                <p>There are certain physical challenges that only some team members will need to do, and teams can choose who will participate.</p>
+            </div>
+        </div>
+        <div class="section collapsed">
+            <h3 class="collapsible">>Q: What are the boundaries?</h3>
+            <div class="section-content">
+                <p>A: We don't want people to spend the race driving (and disobeying speed limits while driving). So most of the activities are relatively close to each other.</p>
+                <p>We currently have two locations that are just outside of South Jordan. We'll confirm final boundaries at the starting line.</p>
+            </div>
+        </div>
     </div>
+    <script>
+        document.querySelectorAll('.collapsible').forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.parentElement;
+                section.classList.toggle('collapsed');
+            });
+        });
+    </script>
 </body>
 </html>
