@@ -5,7 +5,7 @@ function setViewportScale(scale) {
     }
 }
 
-let timeRemaining = 180; 
+let timeRemaining = 180; // 3:00 minutes
 let hintInterval = null;
 let puzzleSolved = false;
 
@@ -39,6 +39,7 @@ function startPersistentTimer() {
             transformTimerToButton();
             return;
         }
+        
         timeRemaining--;
         let mins = Math.floor(timeRemaining / 60);
         let secs = timeRemaining % 60;
@@ -46,35 +47,52 @@ function startPersistentTimer() {
     }, 1000);
 }
 
+// Modal closing logic
+closeCongratsBtn.onclick = () => { congratsModal.style.display = "none"; }
+closeHintBtn.onclick = () => { hintModal.style.display = "none"; }
+window.onclick = (event) => {
+    if (event.target == congratsModal) congratsModal.style.display = "none";
+    if (event.target == hintModal) hintModal.style.display = "none";
+}
+viewCongratsBtn.onclick = () => { congratsModal.style.display = "block"; }
+
 document.addEventListener('DOMContentLoaded', () => {
     startPersistentTimer();
-
     const table = document.getElementById('targetTable');
-    const globalInputs = Array.from(table.querySelectorAll('input'));
 
-    globalInputs.forEach((input, index) => {
-        input.addEventListener('keydown', (e) => {
-            if (e.key === "Enter" || (e.key >= "a" && e.key <= "z") || (e.key >= "A" && e.key <= "Z")) {
-                const nextInput = globalInputs[index + 1];
-                if (nextInput) {
-                    setTimeout(() => nextInput.focus(), 10);
-                }
+        // --- MOBILE-OPTIMIZED AUTO-TABBING ---
+const globalInputs = document.querySelectorAll('input[type="text"]');
+globalInputs.forEach((input, index) => {
+    // Listen for 'input' to catch text changes
+    input.addEventListener('input', (e) => {
+        const value = input.value;
+        const max = parseInt(input.getAttribute('maxlength'));
+
+        if (value.length >= max) {
+            const nextInput = globalInputs[index + 1];
+            if (nextInput) {
+                // Short delay helps iOS handle the focus shift while the keyboard is active
+                setTimeout(() => nextInput.focus(), 10);
             }
-            if (e.key === "Backspace" && input.value === "") {
-                const prevInput = globalInputs[index - 1];
-                if (prevInput) {
-                    setTimeout(() => prevInput.focus(), 10);
-                }
-            }
-        });
+        }
     });
+
+    // Backspace logic for mobile
+    input.addEventListener('keydown', (e) => {
+        if (e.key === "Backspace" && input.value === "") {
+            const prevInput = globalInputs[index - 1];
+            if (prevInput) {
+                setTimeout(() => prevInput.focus(), 10);
+            }
+        }
+    });
+});
     
     table.addEventListener('input', function() {
         let allCorrect = true;
         const allInputs = table.querySelectorAll('input');
         
         allInputs.forEach(input => {
-            // Decodes the obfuscated answer for comparison
             const correctValue = atob(input.getAttribute('data-answer')).toLowerCase();
             const userValue = input.value.toLowerCase();
             const cell = input.parentElement;
@@ -92,27 +110,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (allCorrect && !puzzleSolved) {
             puzzleSolved = true;
+            
+            // 1. Handle Timer Logic (Silent stop)
             if (hintInterval) {
                 clearInterval(hintInterval);
                 timeRemaining = 0; 
                 transformTimerToButton(); 
             }
+
+            // 2. Show Congrats
             congratsModal.style.display = "block";
             viewCongratsBtn.style.display = "inline-block";
         }
     });
-
-    closeCongratsBtn.onclick = () => { congratsModal.style.display = "none"; }
-    closeHintBtn.onclick = () => { hintModal.style.display = "none"; }
-    window.onclick = (event) => {
-        if (event.target == congratsModal) congratsModal.style.display = "none";
-        if (event.target == hintModal) hintModal.style.display = "none";
-    }
-    viewCongratsBtn.onclick = () => { congratsModal.style.display = "block"; }
 });
 
-const congratsMsg = "PGgyPkV2ZW50IENvbXBsZXRlITwvaDI+PHA+RGVjaXBoZXIgdGhlIG1lc3NhZ2UgYW5kIGZpZ3VyZSBvdXQgd2hlcmUgdG8gZ28uIERyb3Agb25lIGJyYXZlIHRlYW0gbWVtYmVyIGF0IHRoZSB0b3Agb2YgdGhlIGhpbGwgd2l0aCB0aGUgYmVhY2ggdG93ZWw7IGV2ZXJ5b25lIGVsc2Ugc2hvdWxkIHBhcmsgYXQgdGhlIGJvdHRvbSBvZiB0aGUgaGlsbC48L3A+";
-const hintMsg = "PGgyPkhpbnQ8L2gyPjxwPlNlZSB0aGUgc3BhY2UgaW4gdGhlIGNpcGhlciB0ZXh0PyBUaGUgdGV4dCBiZWZvcmUgdGhlIHNwYWNlIGFsbCBnb2VzIGluIHRoZSBmaXJzdCBjb2x1bW47IGFmdGVyIHRoZSBzcGFjZSBpbiB0aGUgc2Vjb25kIGNvbHVtbi4gUmVhZCB0aGUgbWVzc2FnZSBpbiBhIHppZ3phZyBwYXR0ZXJuLjwvcD4=";
+const congratsMsg = "PGgyPkdldCB0byB0aGUgbmV4dCBldmVudCE8L2gyPgogICAgICAgIDxwPjxhIGhyZWY9Imh0dHBzOi8vd2hhdDN3b3Jkcy5jb20vamVsbHkueWVhcnMuY2hpcHMiIHRhcmdldD0iX2JsYW5rIj4vLy9qZWxseS55ZWFycy5jaGlwczwvYT4uIEhlYWQgdG8gYSBzcG9ydGluZyB2ZW51ZSBwcmFjdGljZSBncm91bmRzIGluIFdlc3QgSm9yZGFuLiBMb29rIGluIHRoZSBlcXVpcG1lbnQgeW91IGZpbmQgYXQgdGhlIGxvY2F0aW9uLjwvcD4=";
+const hintMsg = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPlRoaW5rIGNyb3Nzd29yZCBjbHVlcy4gSnVzdCB0cnkgc29tZSBsZXR0ZXJzIGlmIHlvdSdyZSByZWFsbHkgc3R1Y2sgYW5kIGxvb2sgdG8gdGhlIGNvbG9ycyB0byBoZWxwIHlvdSBvdXQuPC9wPg==";
 
 document.getElementById('congratsContent').innerHTML = atob(congratsMsg);
 document.getElementById('hintContent').innerHTML = atob(hintMsg);

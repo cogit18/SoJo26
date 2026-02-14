@@ -140,3 +140,48 @@ img.trans {
     display: none; /* Hidden until won */
 }
 
+input {
+    text-align: center;
+    font-size: 18px;
+    text-transform: uppercase;
+    width: 40px; 
+    
+    }
+
+    .content {
+  background-color: rgba(255,255,255,0.9);
+  padding: 10px;
+}
+
+    #targetTable {
+  border-collapse: separate;
+  margin: 0 auto;
+  background-color: #FFF;
+}
+
+#targetTable .entry {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  max-width: 48px;
+  max-height: 48px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#targetTable input[type="text"] {
+  width: 100%;
+  height: 100%;
+  font-size: 1.5em;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid #888;
+  background: transparent;
+  outline: none;
+  margin: 0;
+  display: block;
+  box-sizing: border-box;
+}

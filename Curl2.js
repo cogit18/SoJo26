@@ -1,24 +1,12 @@
-// 1. Define custom mine map (Letters = mine, 0 = empty)
-const mineMap = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, "A", 0, 0, 0, 0],
-    [0, "X", 0, 0, 0, "E", "N", 0],
-    [0, 0, 0, "S", 0, 0, 0, 0],
-    ["M", "A", 0, 0, 0, "S", 0, 0],
-    [0, 0, "H", 0, 0, 0, "S", 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, "O", 0, 0, "J", 0, 0],
-    [0, 0, 0, 0, 0, 0, "O", 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0]
-];
+// Obfuscated Mine Map
+const encodedMineMap = "W1swLDAsMCwwLDAsMCwwLDBdLFswLDAsMCwwLDAsMCwwLDBdLFswLDAsMCwiQSIsMCwwLDAsMF0sWzAsIlgiLDAsMCwwLCJFIiwiTiIsMF0sWzAsMCwwLCJTIiwwLDAsMCwwXSxbIk0iLCJBLiIsMCwwLDAsIlMiLDAsMF0sWzAsMCwiSCIsMCwwLDAsIlMiLDBdLFswLDAsMCwwLDAsMCwwLDBdLFswLDAsIk8iLDAsMCwiSiIsMCwwXSxbMCwwLDAsMCwwLDAsIk8iLDBdLFswLDAsMCwwLDAsMCwwLDBdLFswLDAsMCwwLDAsMCwwLDBdXQ==";
+const mineMap = JSON.parse(atob(encodedMineMap));
 
 // Persistent variables
 let clickMode = 'reveal';
 let timeRemaining = 180; 
 let hintInterval = null;
-let puzzleSolved = false; // New state to track victory
+let puzzleSolved = false; 
 
 // Modal Logic References
 const congratsModal = document.getElementById("congratsModal");
@@ -63,9 +51,7 @@ function startPersistentTimer() {
     }, 1000);
 }
 
-// Updated Modal closing logic to ensure it only runs if elements exist
 document.addEventListener('DOMContentLoaded', () => {
-    // Modal Logic References
     const congratsModal = document.getElementById("congratsModal");
     const hintModal = document.getElementById("hintModal");
     const closeCongratsBtn = document.getElementById("closeCongrats");
@@ -83,8 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     startPersistentTimer();
     startNewGame();
 });
-
-viewCongratsBtn.onclick = () => { congratsModal.style.display = "block"; }
 
 class Minesweeper {
     constructor(map) {
@@ -125,7 +109,6 @@ class Minesweeper {
 
     render() {
         this.boardElement.innerHTML = '';
-        // Set exact width for even 313px fit
         this.boardElement.style.gridTemplateColumns = `repeat(${this.cols}, 37.875px)`;
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
@@ -159,7 +142,6 @@ class Minesweeper {
         const val = this.boardData[r][c];
 
         if (typeof val === 'string') {
-            // Player hit a mine: Reveal the explosion, but NO LETTERS
             this.triggerGameOver(cell);
         } else {
             this.revealedCount++;
@@ -175,7 +157,6 @@ class Minesweeper {
                 }
             }
             if (this.revealedCount === this.totalSafeCells) {
-                // Victory: NOW reveal the letters
                 this.revealAllMines();
                 this.triggerWin();
             }
@@ -188,9 +169,7 @@ class Minesweeper {
                 const val = this.boardData[r][c];
                 if (typeof val === 'string') {
                     const cell = this.boardElement.children[r * this.cols + c];
-                    // Remove flag if present
                     cell.classList.remove('flagged');
-                    // Add revealed and special winner styling
                     cell.classList.add('revealed', 'winner');
                     cell.innerText = val; 
                 }
@@ -204,7 +183,7 @@ class Minesweeper {
 
     triggerGameOver(mineCell) {
         this.gameOver = true;
-        mineCell.classList.add('mine'); // Still show red background for the losing cell
+        mineCell.classList.add('mine');
         document.getElementById('restart-btn').style.display = 'block';
         setTimeout(() => alert("🔥BURNING THE STONE! Start over."), 10);
     }
@@ -212,18 +191,13 @@ class Minesweeper {
     triggerWin() {
         this.gameOver = true;
         puzzleSolved = true; 
-
-        // 1. Handle Timer Logic (Silent stop and transform to button)
         if (hintInterval) {
             clearInterval(hintInterval);
             timeRemaining = 0; 
             transformTimerToButton(); 
         }
-
-        // 2. Show UI Elements
         const congratsModal = document.getElementById("congratsModal");
         const viewCongratsBtn = document.getElementById("viewCongratsBtn");
-        
         if (congratsModal) congratsModal.style.display = "block";
         if (viewCongratsBtn) viewCongratsBtn.style.display = "inline-block";
     }
@@ -235,5 +209,7 @@ function startNewGame() {
     activeGame = new Minesweeper(mineMap);
 }
 
-startPersistentTimer();
-startNewGame();
+const congratsBase64 = "PGgyPkNvbmdyYXR1bGF0aW9ucyE8L2gyPgogICAgICAgICAgICA8cD5WaWN0b3J5ISBVbnNjcmFtYmxlIHRoZSBtaW5lIGZpZWxkIHRvIGtub3cgd2hlcmUgdG8gZ28gbmV4dC48L3A+";
+const hintBase64 = "PGgyPkhpbnQ8L2gyPgogICAgICAgICAgICA8cD5UaGUgbWVkYWwgaXMgb24gdGhlIGxpbmU7IGdldCBib2xkIGZvciB0aGUgZ29sZC4gUnVuIHRoZSBnYW1lIG9uIGFub3RoZXIgcGhvbmUuPC9wPg==";
+document.getElementById('congratsContent').innerHTML = atob(congratsBase64);
+document.getElementById('hintContent').innerHTML = atob(hintBase64);

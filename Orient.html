@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <title>SoJo26 | Ski Mountaineering</title>
+        <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+        <link rel="stylesheet" href="Orient.css">
+    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <body>
+    <div class="content">
+        <img class="center" src="images/Olympic_Rings.svg">
+        <h1>Ski Mountaineering</h1>
+        <div>Hint: <span id="hint-timer">03:00</span></div>
+    <ol>
+        <li>From the northeast corner of the first pad, 79&deg;, 239'</li>
+        <li>From there, 31&deg;, 151'</li>
+        <li>From there, 172&deg;, 107'</li>
+        <li>From there, 236&deg;, 318'</li>
+        <li>From there, 56&deg;, 318'</li>
+    </ol>
+    <table id="targetTable">
+        <tr>
+          <td class="entry">1.</td>
+          <td class="entry"><input type='decimal' maxlength="2"></td>
+        </tr>
+        <tr>
+          <td class="entry">2.</td>
+          <td class="entry"><input type='decimal' maxlength="2"></td>
+        </tr>
+        <tr>
+          <td class="entry">3.</td>
+          <td class="entry"><input type='decimal' maxlength="2"></td>
+        </tr>
+        <tr>
+          <td class="entry">4.</td>
+          <td class="entry"><input type='decimal' maxlength="2"></td>
+        </tr>
+        <tr>
+          <td class="entry">5.</td>
+          <td class="entry"><input type='decimal' maxlength="2"></td>
+        </tr>
+      </table>
+<div style="text-align: center; margin-top: 20px;">
+    <button id="viewCongratsBtn" style="display: none; padding: 10px 20px; cursor: pointer; background-color: #009f3c; color: white; border: 1px solid black; border-radius: 5px;">View Congrats Message</button>
+</div>
+<div id="congratsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeCongrats">&times;</span>
+        <span id="aContent"></span>
+    </div>
+</div>
+<div id="hintModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeHint">&times;</span>
+        <span id="bContent"></span>
+    </div>
+</div>
+    <p></p>
+    <div class="wrapper">
+        <div class="row">
+            <div class="icon"><img class="trans" src="images/Snowboard.svg"></div>
+            <div class="icon"><img class="trans" src="images/Skeleton.svg"></div>
+            <div class="icon"><img class="trans" src="images/Curling.svg"></div>
+            <div class="icon"><img class="trans" src="images/Biathlon.svg"></div>
+            <div class="icon"><img src="images/SkiMountaineering.svg"></div>
+            <div class="icon"><img class="trans" src="images/ShortTrackSpeedSkating.svg"></div>
+            <div class="icon"><img class="trans" src="images/FreestyleSkiing.svg"></div>
+        </div>
+        </div>
+        </div>
+<script src="Orient.js"></script>
+</body>
+</html>
