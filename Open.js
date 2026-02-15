@@ -7,8 +7,8 @@
 const _0x1a = "NDAuNTU1ODgzNA=="
 const _0x2b = "LTExMS45ODM0Nzg1";
 
-
-const TARGET_DISTANCE_FEET = 10;
+// Increased to 20ft for mobile GPS reliability (standard jitter is ~15ft)
+const TARGET_DISTANCE_FEET = 20; 
 let timeRemaining = 180; 
 let hintInterval = null;
 let puzzleSolved = false;
@@ -23,7 +23,7 @@ const gpsStatus = document.getElementById("gps-status");
 
 function decodeCoord(str) { return parseFloat(atob(str)); }
 
-// --- GPS LOGIC (Adapted for Mobile Stability) ---
+// --- GPS LOGIC (Optimized for Mobile Stability) ---
 
 function getDistanceInFeet(lat1, lon1, lat2, lon2) {
     if ((lat1 == lat2) && (lon1 == lon2)) return 0;
@@ -42,15 +42,17 @@ function getDistanceInFeet(lat1, lon1, lat2, lon2) {
 function updatePosition(position) {
     if (puzzleSolved) return;
 
-    // Update UI to show we are actively receiving data
-    gpsStatus.innerText = "Tracking active. Move toward the target...";
-    gpsStatus.style.color = "#007bff"; 
-
+    const crd = position.coords;
     const targetLat = decodeCoord(_0x1a);
     const targetLon = decodeCoord(_0x2b);
-    const dist = getDistanceInFeet(position.coords.latitude, position.coords.longitude, targetLat, targetLon);
+    const dist = getDistanceInFeet(crd.latitude, crd.longitude, targetLat, targetLon);
     
-    console.log(`Distance: ${Math.round(dist)} ft`); // Hidden from user
+    // Update UI with real-time feedback
+    // Note: Showing accuracy helps users know if they need to move away from buildings
+    gpsStatus.innerText = `Tracking active (Accuracy: ±${Math.round(crd.accuracy * 3.28)}ft). Move toward the target...`;
+    gpsStatus.style.color = "#007bff"; 
+
+    console.log(`Distance: ${Math.round(dist)} ft`); 
 
     if (dist <= TARGET_DISTANCE_FEET) {
         handleSuccess();
@@ -70,28 +72,41 @@ function handleSuccess() {
 
 function handleError(error) {
     let msg = "GPS Error: ";
-    if (error.code == 1) msg += "Permission Denied. Please enable location.";
-    else if (error.code == 2) msg += "Position Unavailable.";
-    else if (error.code == 3) msg += "Request Timed Out. Stand in a clear area.";
+    switch(error.code) {
+        case 1: // PERMISSION_DENIED
+            msg = "Location Access Denied. Please enable location permissions in your browser/phone settings and refresh.";
+            alert("This game requires GPS. Please allow location access.");
+            break;
+        case 2: // POSITION_UNAVAILABLE
+            msg = "Position Unavailable. Check your signal or Wi-Fi.";
+            break;
+        case 3: // TIMEOUT
+            msg = "GPS Timeout. Standing in a clear area for a moment might help.";
+            break;
+        default:
+            msg = "An unknown GPS error occurred.";
+    }
     
     gpsStatus.innerText = msg;
     gpsStatus.style.color = "red";
 }
 
 function initGPS() {
-    // SECURITY CHECK: Geolocation fails on HTTP.
+    // SECURITY CHECK: Geolocation strictly requires HTTPS on mobile
     if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
         gpsStatus.innerText = "Error: Use HTTPS to enable GPS tracking.";
         gpsStatus.style.color = "red";
         return;
     }
 
-    const options = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
+    const options = { 
+        enableHighAccuracy: true, // Forces phone to use GPS hardware, not just Cell Towers
+        timeout: 10000,           // 10 seconds before giving up on a single "look"
+        maximumAge: 0             // Do not use a cached location
+    };
     
     if (navigator.geolocation) {
-        // Kickstart GPS hardware (Logic from dist.html)
-        navigator.geolocation.getCurrentPosition(updatePosition, handleError, options);
-        // Continuous tracking
+        // watchPosition is better for mobile as it stays active while the user walks
         navigator.geolocation.watchPosition(updatePosition, handleError, options);
     } else {
         gpsStatus.innerText = "Geolocation not supported by this browser.";
@@ -105,7 +120,7 @@ function showHint() { hintModal.style.display = "block"; }
 function transformTimerToButton() {
     const display = document.getElementById('hint-timer');
     if(display) {
-        display.innerHTML = `<button id="hint-button" style="cursor:pointer; padding: 2px 5px;">View Hint</button>`;
+        display.innerHTML = `<button id="hint-button" style="cursor:pointer; padding: 5px 10px;">View Hint</button>`;
         document.getElementById('hint-button').addEventListener('click', showHint);
     }
 }
