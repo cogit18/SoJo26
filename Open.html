@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SoJo26 | Opening Ceremonies</title>
+        <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+        <link rel="stylesheet" href="Open.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    </head>
+    <body>
+    <div class="content">
+        <img class="center" src="images/Olympic_Rings.svg">
+        <h1>Ski Mountaineering</h1>
+        <div>Hint: <span id="hint-timer">03:00</span></div>
+        <p>You found a QR code! We will use those a lot for this race.</p>
+        <p>Below is another tool we will use a few times: with this site up, walk to the center of the pavilion to your north to see a new message appear.</p>
+        
+        <p id="gps-status" style="font-style: italic; color: #666;">Waiting for GPS location...</p>
+    
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="viewCongratsBtn" style="display: none; padding: 10px 20px; cursor: pointer; background-color: #009f3c; color: white; border: 1px solid black; border-radius: 5px;">View Congrats Message</button>
+        </div>
+
+        <div id="congratsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeCongrats">&times;</span>
+                <span id="congratsContent"></span>
+            </div>
+        </div>
+        <div id="hintModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeHint">&times;</span>
+                <span id="hintContent"></span>
+            </div>
+        </div>
+
+        <p></p>
+        <div class="wrapper">
+            <div class="row">
+                <div class="icon"><img src="images/Snowboard.svg"></div>
+                <div class="icon"><img src="images/Skeleton.svg"></div>
+                <div class="icon"><img src="images/Curling.svg"></div>
+                <div class="icon"><img src="images/Biathlon.svg"></div>
+                <div class="icon"><img src="images/SkiMountaineering.svg"></div>
+                <div class="icon"><img src="images/ShortTrackSpeedSkating.svg"></div>
+                <div class="icon"><img src="images/FreestyleSkiing.svg"></div>
+            </div>
+        </div>
+    </div>
+    <script src="Open.js"></script>
+    </body>
+</html>

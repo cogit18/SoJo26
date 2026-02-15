@@ -1,0 +1,164 @@
+
+<html>
+<!-- GPS based puzzle hunt. Show only a number on screen.
+     That number is the distance in feet from the current position
+     to the target GPS location. The distance will update as the
+     player moves until the player is close enough to the target.
+     Then display a success image and text.
+-->
+<head>
+<style>
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+html, body {
+  height: 100%;
+  overflow: hidden;
+  }
+.wrapper {
+  display: grid;
+  border-style: solid;
+  border-color: red;
+  grid-template-columns: 100%;
+  grid-template-rows: auto min-content;
+  grid-gap: 2px;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+#distance-feedback {
+  //border-style: solid;
+  //border-color: blue;
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 20vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#error-feedback {
+  //border-style: solid;
+  //border-color: blue;
+  grid-column: 1;
+  grid-row: 2;
+}
+img {
+	max-width: 100%;
+	max-height: 100vh; /* Viewport Height */
+	object-fit: contain;
+	display: block; /* Removes bottom margin/whitespace */
+	margin: auto; /* Center the image */
+}
+/*
+html, body { margin: 0px; height: 100%; }
+div {
+    height: 100%;
+    width: 100%;
+    border: 2px dashed #4b2869;
+}
+#distance-feedback {
+    width:100%;
+    height:100%;
+    min-height: 10em;
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 150px;
+    text-align:center;
+}
+
+*/
+</style>
+<script>
+
+// Example: San Francisco Yoda statue outside Lucasfilm
+targetLat='37.7987857';
+targetLong='-122.450617';
+successImage='https://upload.wikimedia.org/wikipedia/en/f/ff/SuccessKid.jpg';
+targetSize = 10; // distance in feet to target for success
+
+// if demoMode is true, ignore the configured target location
+// and pick a target approx. 700 feet East of the player's
+// starting position.
+// (assuming lat. 37.8 N, further or closer at different latitudes)
+demoMode = true;
+demoModeDistance = 0.0003; // approx. 100 feet East at 83N
+successImage='https://www.petertheobald.com/Downloads/puzzle2023-gpssuccess.png';
+
+const options = {
+  enableHighAccuracy: true,
+  timeout: 10000,
+};
+// unit='M'iles (default) 'K'ilometers 'N'autical miles 'f'eet 'm'eters
+function distance(lat1, lon1, lat2, lon2, unit) {
+	if ((lat1 == lat2) && (lon1 == lon2)) {
+		return 0;
+	}
+	else {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="K" || unit=="m") { dist = dist * 1.609344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		if (unit=='m') { dist = dist * 1000.0 }
+		if (unit=='f') { dist = dist * 5280 }
+		return dist;
+	}
+}
+found=false;
+function updateDistance(position) {
+  if (found) {
+    return;
+	}
+  if (demoMode) {
+	targetLat = position.coords.latitude;
+	// targetLong = position.coords.longitude + 0.00242; // approx. 700 feet East at 38N
+	targetLong = position.coords.longitude + demoModeDistance; // approx. 100 feet East at 38N
+	demoMode = false;
+  }
+  dist=distance(targetLat, targetLong, position.coords.latitude, position.coords.longitude, 'f');
+  console.log(targetLat, targetLong, position.coords.latitude, position.coords.longitude, 'f', dist.toLocaleString(undefined, {maximumFractionDigits: 0}))
+  //dist=3; // DEBUG
+  if (dist<targetSize) {
+	document.getElementById('success-image').src = successImage;
+	document.getElementById("distance-feedback").innerHTML = '!';
+	document.getElementById('success-audio').play(); // this won't work on iOS, audio without user pressing a button is forbidden
+	found=true;
+	} else {
+		document.getElementById("distance-feedback").innerHTML = ' ' + dist.toLocaleString(undefined, {maximumFractionDigits: 0}) + ' ';
+	}
+}
+function updateError(error) {
+  document.getElementById("error-feedback").innerHTML = '(Error. You must enable GPS location for this browser)';
+}
+window.onload = function() {
+  // do something when the page loads
+  //document.getElementById("distance-feedback").style.width = "100%";
+  //document.getElementById("distance-feedback").style.height = "100%";
+  navigator.geolocation.getCurrentPosition(updateDistance, updateError, options);
+  const id = navigator.geolocation.watchPosition(updateDistance, updateError, options);
+};
+</script>
+</head>
+<body>
+<img id='success-image' src="https://www.petertheobald.com/downloads/1x1white.png">
+<div class="wrapper">
+  <div id="distance-feedback">
+  ( )
+  </div>
+  <div id="error-feedback">
+  </div>
+</div>
+<audio id="success-audio" src="https://www.petertheobald.com/downloads/ta-da.mp3" preload="auto"></audio>
+</body>
+</html>
