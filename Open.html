@@ -4,17 +4,29 @@
         <title>SoJo26 | Opening Ceremonies</title>
         <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
         <link rel="stylesheet" href="Open.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+        
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
     </head>
     <body>
     <div class="content">
         <img class="center" src="images/Olympic_Rings.svg">
-        <h1>Ski Mountaineering</h1>
+        <h1>Opening Ceremonies</h1>
         <div>Hint: <span id="hint-timer">03:00</span></div>
         <p>You found a QR code! We will use those a lot for this race.</p>
+        
         <p>Below is another tool we will use a few times: with this site up, walk to the center of the pavilion to your north to see a new message appear.</p>
         
-        <p id="gps-status" style="font-style: italic; color: #666;">Waiting for GPS location...</p>
+        <p id="gps-status" style="font-weight: bold; font-size: 1.1em; color: #d9534f;">Waiting for GPS permission...</p>
+        <p id="distance-display" style="font-size: 1.2em; font-weight: bold; margin: 5px 0;">Distance: -- ft</p>
+
+        <div id="map" style="height: 300px; width: 100%; border-radius: 8px; margin-bottom: 20px; border: 2px solid #ccc;"></div>
     
         <div style="text-align: center; margin-top: 20px;">
             <button id="viewCongratsBtn" style="display: none; padding: 10px 20px; cursor: pointer; background-color: #009f3c; color: white; border: 1px solid black; border-radius: 5px;">View Congrats Message</button>

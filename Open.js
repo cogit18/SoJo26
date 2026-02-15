@@ -3,15 +3,19 @@
 // const _0x1a = "NDAuNTY2NzQ="; 
 // const _0x2b = "LTExMi4wMDg0Mg==";
 
-// Home testing, 40.5558834,-111.9834785
+// Home testing coordinates (currently active)
 const _0x1a = "NDAuNTU1ODgzNA=="
 const _0x2b = "LTExMS45ODM0Nzg1";
 
-// Increased to 20ft for mobile GPS reliability (standard jitter is ~15ft)
 const TARGET_DISTANCE_FEET = 20; 
 let timeRemaining = 180; 
 let hintInterval = null;
 let puzzleSolved = false;
+
+// Map & Marker variables
+let map = null;
+let userMarker = null;
+let accuracyCircle = null;
 
 // UI References
 const congratsModal = document.getElementById("congratsModal");
@@ -20,23 +24,43 @@ const closeCongratsBtn = document.getElementById("closeCongrats");
 const closeHintBtn = document.getElementById("closeHint");
 const viewCongratsBtn = document.getElementById("viewCongratsBtn");
 const gpsStatus = document.getElementById("gps-status");
+const distanceDisplay = document.getElementById("distance-display");
 
 function decodeCoord(str) { return parseFloat(atob(str)); }
 
-// --- GPS LOGIC (Optimized for Mobile Stability) ---
+// --- GPS & MAP LOGIC ---
 
+// Haversine Formula for accurate distance
 function getDistanceInFeet(lat1, lon1, lat2, lon2) {
-    if ((lat1 == lat2) && (lon1 == lon2)) return 0;
-    var radlat1 = Math.PI * lat1/180;
-    var radlat2 = Math.PI * lat2/180;
-    var theta = lon1-lon2;
-    var radtheta = Math.PI * theta/180;
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    if (dist > 1) dist = 1;
-    dist = Math.acos(dist);
-    dist = dist * 180/Math.PI;
-    dist = dist * 60 * 1.1515 * 5280; // Miles to Feet
-    return dist;
+    const R = 20902231; // Radius of Earth in feet
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function toRad(Value) {
+    return Value * Math.PI / 180;
+}
+
+function initMap(lat, lon) {
+    // Initialize Leaflet Map
+    map = L.map('map').setView([lat, lon], 18); // Zoom level 18 is good for walking
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Create User Marker (Blue)
+    userMarker = L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
+    
+    // Create Accuracy Circle (Blue, translucent)
+    accuracyCircle = L.circle([lat, lon], {radius: 10}).addTo(map);
 }
 
 function updatePosition(position) {
@@ -45,15 +69,31 @@ function updatePosition(position) {
     const crd = position.coords;
     const targetLat = decodeCoord(_0x1a);
     const targetLon = decodeCoord(_0x2b);
+    
+    // Calculate Distance
     const dist = getDistanceInFeet(crd.latitude, crd.longitude, targetLat, targetLon);
     
-    // Update UI with real-time feedback
-    // Note: Showing accuracy helps users know if they need to move away from buildings
-    gpsStatus.innerText = `Tracking active (Accuracy: ±${Math.round(crd.accuracy * 3.28)}ft). Move toward the target...`;
-    gpsStatus.style.color = "#007bff"; 
+    // Update Map
+    if (!map) {
+        initMap(crd.latitude, crd.longitude);
+    } else {
+        const newLatLng = new L.LatLng(crd.latitude, crd.longitude);
+        userMarker.setLatLng(newLatLng);
+        accuracyCircle.setLatLng(newLatLng);
+        accuracyCircle.setRadius(crd.accuracy); // Visualizes GPS accuracy
+        map.setView(newLatLng); // Keeps map centered on user
+    }
 
-    console.log(`Distance: ${Math.round(dist)} ft`); 
+    // Update UI Text
+    gpsStatus.innerText = "Tracking Active";
+    gpsStatus.style.color = "#007bff";
+    
+    distanceDisplay.innerText = `Distance: ${Math.round(dist)} ft`;
+    
+    // Console log for debugging
+    console.log(`Lat: ${crd.latitude}, Lon: ${crd.longitude}, Dist: ${dist} ft`);
 
+    // Check Win Condition
     if (dist <= TARGET_DISTANCE_FEET) {
         handleSuccess();
     }
@@ -62,8 +102,9 @@ function updatePosition(position) {
 function handleSuccess() {
     if (puzzleSolved) return;
     puzzleSolved = true;
-    gpsStatus.innerText = "Target Found!";
+    gpsStatus.innerText = "Target Reached!";
     gpsStatus.style.color = "#009f3c";
+    distanceDisplay.innerText = "Distance: 0 ft";
 
     if (hintInterval) clearInterval(hintInterval);
     congratsModal.style.display = "block";
@@ -73,47 +114,36 @@ function handleSuccess() {
 function handleError(error) {
     let msg = "GPS Error: ";
     switch(error.code) {
-        case 1: // PERMISSION_DENIED
-            msg = "Location Access Denied. Please enable location permissions in your browser/phone settings and refresh.";
-            alert("This game requires GPS. Please allow location access.");
-            break;
-        case 2: // POSITION_UNAVAILABLE
-            msg = "Position Unavailable. Check your signal or Wi-Fi.";
-            break;
-        case 3: // TIMEOUT
-            msg = "GPS Timeout. Standing in a clear area for a moment might help.";
-            break;
-        default:
-            msg = "An unknown GPS error occurred.";
+        case 1: msg = "Location Access Denied."; break;
+        case 2: msg = "Position Unavailable."; break;
+        case 3: msg = "GPS Timeout."; break;
+        default: msg = "Unknown GPS Error.";
     }
-    
     gpsStatus.innerText = msg;
     gpsStatus.style.color = "red";
 }
 
 function initGPS() {
-    // SECURITY CHECK: Geolocation strictly requires HTTPS on mobile
     if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-        gpsStatus.innerText = "Error: Use HTTPS to enable GPS tracking.";
+        gpsStatus.innerText = "HTTPS required for GPS.";
         gpsStatus.style.color = "red";
         return;
     }
 
     const options = { 
-        enableHighAccuracy: true, // Forces phone to use GPS hardware, not just Cell Towers
-        timeout: 10000,           // 10 seconds before giving up on a single "look"
-        maximumAge: 0             // Do not use a cached location
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
     };
     
     if (navigator.geolocation) {
-        // watchPosition is better for mobile as it stays active while the user walks
         navigator.geolocation.watchPosition(updatePosition, handleError, options);
     } else {
-        gpsStatus.innerText = "Geolocation not supported by this browser.";
+        gpsStatus.innerText = "Geolocation not supported.";
     }
 }
 
-// --- TIMER & MODAL LOGIC ---
+// --- TIMER & MODAL LOGIC (Unchanged) ---
 
 function showHint() { hintModal.style.display = "block"; }
 
