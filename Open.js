@@ -3,11 +3,11 @@
 // const _0x1a = "NDAuNTY2NzQ="; 
 // const _0x2b = "LTExMi4wMDg0Mg==";
 
-// Home testing coordinates (currently active)
-const _0x1a = "NDAuNTU1ODgzNA=="
-const _0x2b = "LTExMS45ODM0Nzg1";
+// Home testing coordinates, 40.5558421,-111.983518 (currently active)
+const _0x1a = "NDAuNTU1ODQyMQ=="
+const _0x2b = "LTExMS45ODM1MTg=";
 
-const TARGET_DISTANCE_FEET = 20; 
+const TARGET_DISTANCE_FEET = 10; 
 let timeRemaining = 180; 
 let hintInterval = null;
 let puzzleSolved = false;
