@@ -45,24 +45,6 @@ function getDistanceInFeet(lat1, lon1, lat2, lon2) {
 function toRad(Value) {
     return Value * Math.PI / 180;
 }
-
-function initMap(lat, lon) {
-    // Initialize Leaflet Map
-    map = L.map('map').setView([lat, lon], 18); // Zoom level 18 is good for walking
-
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-
-    // Create User Marker (Blue)
-    userMarker = L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
-    
-    // Create Accuracy Circle (Blue, translucent)
-    accuracyCircle = L.circle([lat, lon], {radius: 10}).addTo(map);
-}
-
 function updatePosition(position) {
     if (puzzleSolved) return;
 
@@ -73,17 +55,6 @@ function updatePosition(position) {
     // Calculate Distance
     const dist = getDistanceInFeet(crd.latitude, crd.longitude, targetLat, targetLon);
     
-    // Update Map
-    if (!map) {
-        initMap(crd.latitude, crd.longitude);
-    } else {
-        const newLatLng = new L.LatLng(crd.latitude, crd.longitude);
-        userMarker.setLatLng(newLatLng);
-        accuracyCircle.setLatLng(newLatLng);
-        accuracyCircle.setRadius(crd.accuracy); // Visualizes GPS accuracy
-        map.setView(newLatLng); // Keeps map centered on user
-    }
-
     // Update UI Text
     gpsStatus.innerText = "Tracking Active";
     gpsStatus.style.color = "#007bff";
@@ -106,9 +77,15 @@ function handleSuccess() {
     gpsStatus.style.color = "#009f3c";
     distanceDisplay.innerText = "Distance: 0 ft";
 
-    if (hintInterval) clearInterval(hintInterval);
-    congratsModal.style.display = "block";
-    viewCongratsBtn.style.display = "inline-block";
+    if (hintInterval) {
+        clearInterval(hintInterval);
+        timeRemaining = 0; 
+        transformTimerToButton(); 
+    }
+    const congratsModal = document.getElementById("congratsModal");
+    const viewCongratsBtn = document.getElementById("viewCongratsBtn");
+    if (congratsModal) congratsModal.style.display = "block";
+    if (viewCongratsBtn) viewCongratsBtn.style.display = "inline-block";
 }
 
 function handleError(error) {
@@ -176,8 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
     startTimer();
     initGPS();
     
-    const congratsMsg = "PGgyPkdldCB0byB0aGUgbmV4dCBldmVudCE8L2gyPgogICAgICAgIDxwPjxhIGhyZWY9Imh0dHBzOi8vd2hhdDN3b3Jkcy5jb20vamVsbHkueWVhcnMuY2hpcHMiIHRhcmdldD0iX2JsYW5rIj4vLy9qZWxseS55ZWFycy5jaGlwczwvYT4uIEhlYWQgdG8gYSBzcG9ydGluZyB2ZW51ZSBwcmFjdGljZSBncm91bmRzIGluIFdlc3QgSm9yZGFuLiBMb29rIGluIHRoZSBlcXVpcG1lbnQgeW91IGZpbmQgYXQgdGhlIGxvY2F0aW9uLjwvcD4=";
-    const hintMsg = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPlRoaW5rIGNyb3Nzd29yZCBjbHVlcy4gSnVzdCB0cnkgc29tZSBsZXR0ZXJzIGlmIHlvdSdyZSByZWFsbHkgc3R1Y2sgYW5kIGxvb2sgdG8gdGhlIGNvbG9ycyB0byBoZWxwIHlvdSBvdXQuPC9wPg==";
+    const congratsMsg = "PGgyPllvdSBtYWRlIGl0ITwvaDI+CiAgICAgICAgPHA+Tm93IGdldCByZWFkeSBmb3IgdGhlIG9wZW5pbmcgY2VyZW1vbmllcy4gSGF2ZSBhIHRlYW0gbWVtYmVyIGdvIGdldCB0aGUgU3BlZWRRdWl6emluZyBhcHAuIE9ubHkgb25lIHBlcnNvbiBwZXIgdGVhbSBuZWVkcyBpdC48L3A+";
+    const hintMsg = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPklmIHlvdSdyZSBzdHVyZ2dsaW5nIHRvIG1ha2UgaXQgd29yayBvbiBvbmUgcGhvbmUsIGhhdmUgYW5vdGhlciB0ZWFtIG1lbWJlciB0cnkuIFlvdSBjYW4gYWxzbyBnbyBsb29rIGF0IHlvdXIgc2V0dGluZ3MuPC9wPgogICAgICAgIDxwPmlPUzogU2V0dGluZ3MgPiBQcml2YWN5ICYgU2VjdXJpdHkgPiBMb2NhdGlvbiBTZXJ2aWNlcyA+IHlvdXIgd2ViIGJyb3dzZXIgKFNhZmFyaSwgQ2hyb21lLCBldGMuKSA+IEFzayBOZXh0IFRpbWU7IHRoZW4gcmVmcmVzaCB0aGUgd2Vic2l0ZSBhbmQgY2hvb3NlIGFsbG93LjwvcD4KICAgICAgICA8cD5BbmRyb2lkOiBTZXR0aW5ncyA+IExvY2F0aW9uID4gVHVybiBPTiBVc2UgTG9jYXRpb24gYW5kIGNoZWNrIEFwcCBwZXJtaXNzaW9ucyB0byBtYWtlIHN1cmUgeW91ciB3ZWIgYnJvd3NlciAoQ2hyb21lLCBldGMuKSBpcyBhbGxvd2VkIHRvIGFjY2VzcyBsb2NhdGlvbjsgdGhlbiByZWZyZXNoIHRoZSB3ZWJzaXRlIGFuZCBjaG9vc2UgYWxsb3cuPC9wPg==";
     
     document.getElementById('congratsContent').innerHTML = atob(congratsMsg);
     document.getElementById('hintContent').innerHTML = atob(hintMsg);
