@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SoJo26 | Speed Skating</title>
+        <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+        <link rel="stylesheet" href="speed.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    </head>
+    <body>
+    <div class="content">
+        <img class="center" src="images/Olympic_Rings.svg">
+        <h1>Speed Skating</h1>
+        <div>Hint: <span id="hint-timer">03:00</span></div>
+        <p>You found another QR code! Time to hit the track.</p>
+        
+        <p>Keep this site open and ensure location services are enabled. Visit the four locations hidden around the course. As you reach each one, a stanza of a poem will be revealed below.</p>
+        
+        <p id="gps-status" style="font-weight: bold; font-size: 1.1em; color: #d9534f;">Waiting for GPS permission...</p>
+        
+        <div class="stanza-container">
+            <div id="stanza1" class="stanza-box">Checkpoint 1</div>
+            <div id="stanza2" class="stanza-box">Checkpoint 2</div>
+            <div id="stanza3" class="stanza-box">Checkpoint 3</div>
+            <div id="stanza4" class="stanza-box">Checkpoint 4</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="viewCongratsBtn" style="display: none; padding: 10px 20px; cursor: pointer; background-color: #009f3c; color: white; border: 1px solid black; border-radius: 5px;">View Congrats Message</button>
+        </div>
+
+        <div id="congratsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeCongrats">&times;</span>
+                <span id="congratsContent"></span>
+            </div>
+        </div>
+        <div id="hintModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeHint">&times;</span>
+                <span id="hintContent"></span>
+            </div>
+        </div>
+
+        <p></p>
+        <div class="wrapper">
+            <div class="row">
+                <div class="icon"><img class="trans" src="images/SkiMountaineering.svg"></div>
+                <div class="icon"><img src="images/ShortTrackSpeedSkating.svg"></div>
+                <div class="icon"><img class="trans" src="images/Snowboard.svg"></div>
+                <div class="icon"><img class="trans" src="images/Skeleton.svg"></div>
+                <div class="icon"><img class="trans" src="images/FreestyleSkiing.svg"></div>
+                <div class="icon"><img class="trans" src="images/Curling.svg"></div>
+                <div class="icon"><img class="trans" src="images/Biathlon.svg"></div>
+            </div>
+        </div>
+    </div>
+    <script src="speed.js"></script>
+    </body>
+</html>
