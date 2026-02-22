@@ -100,18 +100,18 @@ td {
 }
 
 .gray {
-    min-width: 24px; /* Increased to support wider input columns */
+    min-width: 36px; /* Increased to support wider input columns */
     background-color: lightgrey
 }
 
 input {
     text-align: center;
-    width: 24px; /* Increased from 24px to prevent cutoff */
+    width: 36px; /* Increased from 24px to prevent cutoff */
     font-size: 1em; /* Slightly increased for visibility */
 }
 
 .entry {
-    min-width: 30px; /* Increased from 24px to give more padding to input */
+    min-width: 36px; /* Increased from 24px to give more padding to input */
     cursor: pointer;
     text-align: center;
     overflow: hidden;
