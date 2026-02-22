@@ -76,16 +76,6 @@ img.trans {
     opacity: 0.3;
 }
 
-/* Map specific styles */
-#map {
-    height: 300px;
-    width: 100%;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #999;
-    z-index: 1; /* Keeps map rendering below the modals */
-}
-
 /* Stanza specific styles */
 .stanza-container {
     margin: 20px 0;
@@ -109,7 +99,6 @@ img.trans {
     color: #000;
     text-align: left;
     font-style: normal;
-    cursor: default !important;
 }
 
 /* Modal Styles */
@@ -158,5 +147,5 @@ img.trans {
     color: white;
     border: 1px solid black;
     border-radius: 5px;
-    display: none; 
+    display: none; /* Hidden until won */
 }
