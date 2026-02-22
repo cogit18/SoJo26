@@ -17,6 +17,11 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     
+    /* Lock the body to the exact screen size */
+    margin: 0;
+    padding: 0;
+    height: 100dvh; /* Dynamic Viewport Height: adjusts automatically for mobile keyboards */
+    overflow: hidden; /* Prevents the whole page from bouncing/scrolling */
 }
 
 /*.logo {
@@ -36,7 +41,11 @@ h1 {
 
 .content {
     max-width: 313px;
+    width: 100%;
     margin: auto;
+    height: 100%; /* Take up the full locked body height */
+    display: flex;
+    flex-direction: column; /* Stacks the header and the scroll area */
 }
 
 .wrapper {
@@ -196,13 +205,23 @@ input {
 }
 
 .sticky-header {
-    position: sticky;
-    top: 0;
-    background-color: #ffffff; /* Must be solid to hide table rows behind it */
-    z-index: 1000;             /* Ensures it stays above the zigzag image */
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #000; /* Visual separator */
+    flex-shrink: 0; /* Prevents the header from shrinking when the keyboard opens */
+    background-color: #ffffff; 
+    z-index: 1000;             
+    padding: 10px 5px; 
+    border-bottom: 2px solid #000;
+    /* We removed position: sticky; Flexbox is handling the layout now! */
+}
+
+.scroll-area {
+    flex-grow: 1; /* Takes up all remaining space below the header */
+    overflow-y: auto; /* Makes only this specific section scrollable */
+    padding-bottom: 250px; /* Huge padding so the keyboard doesn't cover the bottom inputs */
+    scrollbar-width: none; /* Optional: hides the scrollbar for a cleaner app look */
+}
+
+.scroll-area::-webkit-scrollbar {
+    display: none; /* Safari/Chrome scrollbar hiding */
 }
 
 /* Optional: Make the header a bit more compact for mobile screens */
