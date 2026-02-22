@@ -123,7 +123,7 @@ input {
 }
 
 .entry {
-    min-width: 18px;
+    min-width: 24px;
     cursor: pointer;
     text-align: center;
     overflow: hidden;
