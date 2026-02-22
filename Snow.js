@@ -52,42 +52,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = document.getElementById('targetTable');
     const globalInputs = Array.from(table.querySelectorAll('input'));
 
-    // Replace your commented-out loop in Snow.js with this:
-globalInputs.forEach((input, index) => {
-    // 1. Move Forward logic: Fires only when a character is actually typed
-    input.addEventListener('input', () => {
-        if (input.value.length >= 1) {
-            const nextInput = globalInputs[index + 1];
-            if (nextInput) {
-                nextInput.focus();
-            }
-        }
-    });
+     const answerBase64 = [
+        'Uw==', 'bA==', 'bw==', 'cA==', 'ZQ==',
+        'YQ==', 'dA==', 'Vg==', 'ZQ==', 'cg==',
+        'bQ==', 'aQ==', 'bA==', 'aQ==', 'bw==',
+        'bg==', 'UA==', 'YQ==', 'cg==', 'aw=='
+    ];
 
-    // 2. Navigation logic: Handles Backspace and Arrow keys
-    input.addEventListener('keydown', (e) => {
-        if (e.key === "Backspace") {
-            // If current cell is empty, jump focus to the previous one
-            if (input.value === "") {
-                const prevInput = globalInputs[index - 1];
-                if (prevInput) {
-                    prevInput.focus();
+    globalInputs.forEach((input, index) => {
+        // Assign the correct base64 answer dynamically to the input's dataset
+        input.dataset.answer = answerBase64[index];
+
+        // 1. Move Forward logic: Fires only when a character is actually typed
+        input.addEventListener('input', () => {
+            if (input.value.length >= 1) {
+                const nextInput = globalInputs[index + 1];
+                if (nextInput) {
+                    nextInput.focus();
                 }
             }
-            // If cell is NOT empty, default browser behavior deletes the char
-            // but we stay in this cell (fixing your "jump forward" bug).
-        } else if (e.key === "ArrowLeft") {
-            const prevInput = globalInputs[index - 1];
-            if (prevInput) prevInput.focus();
-        } else if (e.key === "ArrowRight") {
-            const nextInput = globalInputs[index + 1];
-            if (nextInput) nextInput.focus();
-        } else if (e.key === "Enter") {
-            const nextInput = globalInputs[index + 1];
-            if (nextInput) nextInput.focus();
-        }
+        });
+
+        // 2. Navigation logic: Handles Backspace and Arrow keys
+        input.addEventListener('keydown', (e) => {
+            if (e.key === "Backspace") {
+                // If current cell is empty, jump focus to the previous one
+                if (input.value === "") {
+                    const prevInput = globalInputs[index - 1];
+                    if (prevInput) {
+                        prevInput.focus();
+                    }
+                }
+            } else if (e.key === "ArrowLeft") {
+                const prevInput = globalInputs[index - 1];
+                if (prevInput) prevInput.focus();
+            } else if (e.key === "ArrowRight") {
+                const nextInput = globalInputs[index + 1];
+                if (nextInput) nextInput.focus();
+            } else if (e.key === "Enter") {
+                const nextInput = globalInputs[index + 1];
+                if (nextInput) nextInput.focus();
+            }
+        });
     });
-});
     
     table.addEventListener('input', function() {
         let allCorrect = true;

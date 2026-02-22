@@ -60,42 +60,33 @@ document.addEventListener('DOMContentLoaded', () => {
     startPersistentTimer();
     const table = document.getElementById('targetTable');
 
-    const answerBase64 = [
-        'ag==', 'ZQ==', 'bA==', 'bA==', 'eQ==',
-        'eQ==', 'ZQ==', 'YQ==', 'cg==', 'cw==',
-        'Yw==', 'aA==', 'aQ==', 'cA==', 'cw==' 
-    ];
+        // --- MOBILE-OPTIMIZED AUTO-TABBING ---
+const globalInputs = document.querySelectorAll('input[type="text"]');
+globalInputs.forEach((input, index) => {
+    // Listen for 'input' to catch text changes
+    input.addEventListener('input', (e) => {
+        const value = input.value;
+        const max = parseInt(input.getAttribute('maxlength'));
 
-    // --- MOBILE-OPTIMIZED AUTO-TABBING ---
-    const globalInputs = document.querySelectorAll('input[type="text"]');
-    globalInputs.forEach((input, index) => {
-        // Assign the correct base64 answer dynamically to the input's dataset
-        input.dataset.answer = answerBase64[index];
-
-        // Listen for 'input' to catch text changes
-        input.addEventListener('input', (e) => {
-            const value = input.value;
-            const max = parseInt(input.getAttribute('maxlength'));
-
-            if (value.length >= max) {
-                const nextInput = globalInputs[index + 1];
-                if (nextInput) {
-                    // Short delay helps iOS handle the focus shift while the keyboard is active
-                    setTimeout(() => nextInput.focus(), 10);
-                }
+        if (value.length >= max) {
+            const nextInput = globalInputs[index + 1];
+            if (nextInput) {
+                // Short delay helps iOS handle the focus shift while the keyboard is active
+                setTimeout(() => nextInput.focus(), 10);
             }
-        });
-
-        // Backspace logic for mobile
-        input.addEventListener('keydown', (e) => {
-            if (e.key === "Backspace" && input.value === "") {
-                const prevInput = globalInputs[index - 1];
-                if (prevInput) {
-                    setTimeout(() => prevInput.focus(), 10);
-                }
-            }
-        });
+        }
     });
+
+    // Backspace logic for mobile
+    input.addEventListener('keydown', (e) => {
+        if (e.key === "Backspace" && input.value === "") {
+            const prevInput = globalInputs[index - 1];
+            if (prevInput) {
+                setTimeout(() => prevInput.focus(), 10);
+            }
+        }
+    });
+});
     
     table.addEventListener('input', function() {
         let allCorrect = true;
@@ -134,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-const congratsMsg = "PGgyPkdldCB0byB0aGUgbmV4dCBldmVudCE8L2gyPgogICAgICAgIDxwPjxhIGhyZWY9Imh0dHBzOi8vd2hhdDN3b3Jkcy5jb20vamVsbHkueWVhcnMuY2hpcHMiIHRhcmdldD0iX2JsYW5rIj4vLy9qZWxseS55ZWFycy5jaGlwczwvYT4uIEhlYWQgdG8gYSBzcG9ydGluZyB2ZW51ZSBwcmFjdGljZSBncm91bmRzIGluIFdlc3QgSm9yZGFuLiBMb29rIGluIHRoZSBlcXVpcG1lbnQgeW91IGZpbmQgYXQgdGhlIGxvY2F0aW9uLjwvcD4=";
-const hintMsg = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPlRoaW5rIGNyb3Nzd29yZCBjbHVlcy4gSnVzdCB0cnkgc29tZSBsZXR0ZXJzIGlmIHlvdSdyZSByZWFsbHkgc3R1Y2sgYW5kIGxvb2sgdG8gdGhlIGNvbG9ycyB0byBoZWxwIHlvdSBvdXQuPC9wPg==";
+const congratsMsg = "PGgyPlNlZSB5b3UgdGhlcmUhPC9oMj4KICAgICAgICA8cD5BcyB5b3UgdHVybiBvbnRvIHRoZSBzdHJlZXQsIHBheSBjbG9zZSBhdHRlbnRpb24gdG8gdGhlIGFkZHJlc3MsIG5vdCB0aGUgbWFwLiBEb24ndCBwdWxsIGludG8gdGhlIG5laWdoYm9yJ3MgZHJpdmV3YXkgYXQgMTk1MC4gUGxlYXNlIHBhcmsgYXMgdGlnaHQgYXMgeW91IGNhbiBpbiB0aGUgcGFya2luZyBsb3QgYXQgdGhlIGVuZCBvZiB0aGUgZHJpdmV3YXkuIFRoZW4gY29tZSBpbnRvIHRoZSBmcm9udCB5YXJkOyBicmluZyB5b3VyIGdsb3ZlcyBhbmQgdG9vbHMuPC9wPg==";
+const hintMsg = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPkdldCB5b3VyIEdvb2dsZSBvbi4gRWFjaCBhbnN3ZXIgaGFzIGEgbWF4aW11bSBudW1iZXIgb2YgY2hhcmFjdGVycy48L3A+";
 
 document.getElementById('congratsContent').innerHTML = atob(congratsMsg);
 document.getElementById('hintContent').innerHTML = atob(hintMsg);

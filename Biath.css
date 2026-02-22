@@ -1,0 +1,180 @@
+@font-face {
+    font-family: LogoFont;
+    src: url(fonts/Shrikhand-Regular.ttf);
+    font-display: swap;
+}        
+
+@font-face {
+    font-family: Lora;
+    src: url(fonts/Lora-Regular.ttf);
+    font-display: swap;
+}
+
+body {
+    background-image: url('images/background.svg?v1');
+    background-position-x: center;
+    background-position-y: bottom;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+}
+
+/*.logo {
+    font-family: LogoFont;
+    text-align: center;
+    font-weight: bolder;
+    font-size: large;
+}
+
+h1 {
+    font-family: LogoFont;
+}*/
+
+* {
+    font-family: Lora;
+}
+
+.content {
+    max-width: 313px;
+    margin: auto;
+}
+
+.wrapper {
+    box-sizing: border-box;
+    padding: 5px;
+    width: 313px;
+    max-height: 56px;
+    border-radius: 28px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+.wrapper .row {
+    font-size: 0px;
+    text-align: center;
+}
+
+.wrapper .row * {
+}
+
+.wrapper .row:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.wrapper .icon {
+    display: inline-block;
+    height: 12%;
+    margin: 1%;
+    width: 12%;
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+}
+
+img.background {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 313px;
+}
+
+img.trans {
+    opacity: 0.3;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: black;
+}
+
+#viewCongratsBtn {
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #009f3c;
+    color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: none; /* Hidden until won */
+}
+
+input {
+    text-align: center;
+    font-size: 18px;
+    text-transform: uppercase;
+    width: .9em 
+    
+    }
+
+    .content {
+  background-color: rgba(255,255,255,0.9);
+  padding: 10px;
+}
+
+    #targetTable {
+  border-collapse: separate;
+  margin: 0 auto;
+}
+
+#targetTable .entry {
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#targetTable input[type="text"] {
+  width: 90%;
+  height: 90%;
+  text-align: center;
+  border: 1px solid #000;
+  background: white;
+  outline: none;
+  margin: 0 auto;
+  display: block;
+  box-sizing: border-box;
+}

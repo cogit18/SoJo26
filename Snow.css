@@ -20,20 +20,9 @@ body {
     /* Lock the body to the exact screen size */
     margin: 0;
     padding: 0;
-    height: 100dvh; /* Dynamic Viewport Height: adjusts automatically for mobile keyboards */
-    overflow: hidden; /* Prevents the whole page from bouncing/scrolling */
+    height: 100dvh; 
+    overflow: hidden; 
 }
-
-/*.logo {
-    font-family: LogoFont;
-    text-align: center;
-    font-weight: bolder;
-    font-size: large;
-}
-
-h1 {
-    font-family: LogoFont;
-}*/
 
 * {
     font-family: Lora;
@@ -43,9 +32,9 @@ h1 {
     max-width: 313px;
     width: 100%;
     margin: auto;
-    height: 100%; /* Take up the full locked body height */
+    height: 100%; 
     display: flex;
-    flex-direction: column; /* Stacks the header and the scroll area */
+    flex-direction: column; 
 }
 
 .wrapper {
@@ -111,66 +100,61 @@ td {
 }
 
 .gray {
-    min-width: 18px;
+    min-width: 24px; /* Increased to support wider input columns */
     background-color: lightgrey
-
 }
 
 input {
     text-align: center;
-    width: 24px;
-    font-size: 1em;
+    width: 24px; /* Increased from 24px to prevent cutoff */
+    font-size: 1em; /* Slightly increased for visibility */
 }
 
 .entry {
-    min-width: 24px;
+    min-width: 30px; /* Increased from 24px to give more padding to input */
     cursor: pointer;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
-
 }
 
-/* 1. Tell the cell to align its content to the bottom */
 .fill-cell {
     vertical-align: bottom;
-    height: 100%; /* Ensures the cell expands to the full rowspan height */
+    height: 100%; 
 }
 
-/* 2. Adjust the image inside */
 .fill-cell img {
     max-width: 100%;
     height: auto;
-    display: block; /* Keeping this is fine if the parent TD handles alignment */
-    margin-top: auto; /* Helps push it down in some rendering engines */
+    display: block; 
+    margin-top: auto; 
 }
 
-/* Add this to ensure the cells stay compact */
 .entry, .gray {
-    height: 14px; /* Adjust this value to your preferred row height */
+    height: 14px; 
     padding: 1px;
 }
 
 /* Modal Styles */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 80%; 
     max-width: 500px;
     text-align: center;
     border-radius: 8px;
@@ -199,32 +183,30 @@ input {
     cursor: pointer;
     background-color: #009f3c;
     color: white;
-    border: 1px solid black; /* Added black border */
+    border: 1px solid black; 
     border-radius: 5px;
-    display: none; /* Hidden until solved */
+    display: none; 
 }
 
 .sticky-header {
-    flex-shrink: 0; /* Prevents the header from shrinking when the keyboard opens */
+    flex-shrink: 0; 
     background-color: #ffffff; 
     z-index: 1000;             
     padding: 10px 5px; 
-    border-bottom: 2px solid #000;
-    /* We removed position: sticky; Flexbox is handling the layout now! */
+    border-bottom: 1px solid #000;
 }
 
 .scroll-area {
-    flex-grow: 1; /* Takes up all remaining space below the header */
-    overflow-y: auto; /* Makes only this specific section scrollable */
-    padding-bottom: 250px; /* Huge padding so the keyboard doesn't cover the bottom inputs */
-    scrollbar-width: none; /* Optional: hides the scrollbar for a cleaner app look */
+    flex-grow: 1; 
+    overflow-y: auto; 
+    padding-bottom: 250px; 
+    scrollbar-width: none; 
 }
 
 .scroll-area::-webkit-scrollbar {
-    display: none; /* Safari/Chrome scrollbar hiding */
+    display: none; 
 }
 
-/* Optional: Make the header a bit more compact for mobile screens */
 .sticky-header img.center {
     width: 60px; 
     margin-bottom: 5px;
