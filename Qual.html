@@ -92,20 +92,20 @@
     <p>
         <table id="targetTable">
             <tr>
-                <td><input type='text' maxlength="1" data-answer='T'></td>
-                <td><input type='text' maxlength="1" data-answer='I'></td>
-                <td><input type='text' maxlength="1" data-answer='N'></td>
-                <td><input type='text' maxlength="1" data-answer='Y'></td>
-                <td><input type='text' maxlength="1" data-answer='.'></td>
-                <td><input type='text' maxlength="1" data-answer='C'></td>
-                <td><input type='text' maxlength="1" data-answer='C'></td>
-                <td><input type='text' maxlength="1" data-answer='/'></td>
-                <td><input type='text' maxlength="1" data-answer='C'></td>
-                <td><input type='text' maxlength="1" data-answer='H'></td>
-                <td><input type='text' maxlength="1" data-answer='A'></td>
-                <td><input type='text' maxlength="1" data-answer='M'></td>
-                <td><input type='text' maxlength="1" data-answer='P'></td>
-                <td><input type='text' maxlength="1" data-answer='S'></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
+                <td><input type='text' maxlength="1"></td>
             </tr>
             <tr>
                 <td>7</td><td>3</td><td>31</td><td>25</td><td>28</td><td>1</td><td>4</td><td>6</td><td>13</td><td>35</td><td>8</td><td>29</td><td>40</td><td>41</td>
@@ -133,16 +133,14 @@
 <div id="congratsModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeCongrats">&times;</span>
-        <h2>Congratulations!</h2>
-        <p>You have found the next clue! <a id="modalLink" href="#" target="_blank"></a></p>
+        <span id="congratsContent"></span>
     </div>
 </div>
 
 <div id="hintModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeHint">&times;</span>
-        <h2>Hint</h2>
-        <p>See how each letter in the tables has a number? Start by filling out the blank numbers, then work on the missing letters in the last table.</p>
+        <span id="hintContent"></span>
     </div>
 </div>
 

@@ -5,6 +5,13 @@ function setViewportScale(scale) {
     }
 }
 
+// Base64 injected modal content
+const congratsMsg = "PGgyPkNvbmdyYXR1bGF0aW9ucyE8L2gyPjxwPllvdSBoYXZlIGZvdW5kIHRoZSBuZXh0IGNsdWUhIDxhIGlkPSJtb2RhbExpbmsiIGhyZWY9IiMiIHRhcmdldD0iX2JsYW5rIj48L2E+PC9wPg==";
+const hintMsg = "PGgyPkhpbnQ8L2gyPjxwPlNlZSBob3cgZWFjaCBsZXR0ZXIgaW4gdGhlIHRhYmxlcyBoYXMgYSBudW1iZXI/IFN0YXJ0IGJ5IGZpbGxpbmcgb3V0IHRoZSBibGFuayBudW1iZXJzLCB0aGVuIHdvcmsgb24gdGhlIG1pc3NpbmcgbGV0dGVycyBpbiB0aGUgbGFzdCB0YWJsZS48L3A+";
+
+document.getElementById('congratsContent').innerHTML = atob(congratsMsg);
+document.getElementById('hintContent').innerHTML = atob(hintMsg);
+
 let timeRemaining = 180; // 3:00 minutes
 let hintInterval = null;
 let puzzleSolved = false;
@@ -38,12 +45,11 @@ function startPersistentTimer() {
         if (timeRemaining <= 0) {
             clearInterval(hintInterval);
             
-            // Only show the alert automatically if it timed out naturally (not forced by solving)
+            // Only show the alert automatically if it timed out naturally
             if (!puzzleSolved) {
                 showHint();
             }
 
-            // Transform the timer span into a clickable button
             transformTimerToButton();
             return;
         }
@@ -84,33 +90,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = document.getElementById('targetTable');
     const baseURL = "HTTPS://";
 
+    // Base64 Obfuscated Answers
+    const answerBase64 = [
+        'VA==', 'SQ==', 'Tg==', 'WQ==', 'Lg==', 'Qw==', 'Qw==', 'Lw==', 'Qw==', 'SA==', 'QQ==', 'TQ==', 'UA==', 'Uw=='
+    ];
+
+    const globalInputs = document.querySelectorAll('input[type="text"]');
+    
+    // Target only the puzzle table's inputs for assignment
+    const puzzleInputs = table.querySelectorAll('input');
+    puzzleInputs.forEach((input, index) => {
+        input.dataset.answer = answerBase64[index];
+    });
+
     // --- MOBILE-OPTIMIZED AUTO-TABBING ---
-const globalInputs = document.querySelectorAll('input[type="text"]');
-globalInputs.forEach((input, index) => {
-    // Listen for 'input' to catch text changes
-    input.addEventListener('input', (e) => {
-        const value = input.value;
-        const max = parseInt(input.getAttribute('maxlength'));
+    globalInputs.forEach((input, index) => {
+        // Listen for 'input' to catch text changes
+        input.addEventListener('input', (e) => {
+            const value = input.value;
+            const max = parseInt(input.getAttribute('maxlength'));
 
-        if (value.length >= max) {
-            const nextInput = globalInputs[index + 1];
-            if (nextInput) {
-                // Short delay helps iOS handle the focus shift while the keyboard is active
-                setTimeout(() => nextInput.focus(), 10);
+            if (value.length >= max) {
+                const nextInput = globalInputs[index + 1];
+                if (nextInput) {
+                    setTimeout(() => nextInput.focus(), 10);
+                }
             }
-        }
-    });
+        });
 
-    // Backspace logic for mobile
-    input.addEventListener('keydown', (e) => {
-        if (e.key === "Backspace" && input.value === "") {
-            const prevInput = globalInputs[index - 1];
-            if (prevInput) {
-                setTimeout(() => prevInput.focus(), 10);
+        // Backspace logic for mobile
+        input.addEventListener('keydown', (e) => {
+            if (e.key === "Backspace" && input.value === "") {
+                const prevInput = globalInputs[index - 1];
+                if (prevInput) {
+                    setTimeout(() => prevInput.focus(), 10);
+                }
             }
-        }
+        });
     });
-});
 
     table.addEventListener('input', function() {
         let combinedString = "";
@@ -119,7 +136,7 @@ globalInputs.forEach((input, index) => {
         
         allInputs.forEach(input => {
             input.setAttribute('maxlength', '1');
-            const correctValue = input.getAttribute('data-answer');
+            const correctValue = atob(input.dataset.answer).toUpperCase();
             const userValue = input.value;
             const cell = input.parentElement;
 
@@ -142,8 +159,8 @@ globalInputs.forEach((input, index) => {
             // 1. Handle Timer Logic on Success
             if (hintInterval) {
                 clearInterval(hintInterval);
-                timeRemaining = 0; // Zero out timer
-                transformTimerToButton(); // Turn into View Hint button without showing alert
+                timeRemaining = 0; 
+                transformTimerToButton(); 
             }
 
             // 2. Setup and Show Congrats
