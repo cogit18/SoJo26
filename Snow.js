@@ -52,22 +52,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = document.getElementById('targetTable');
     const globalInputs = Array.from(table.querySelectorAll('input'));
 
-    globalInputs.forEach((input, index) => {
-        input.addEventListener('keydown', (e) => {
-            if (e.key === "Enter" || (e.key >= "a" && e.key <= "z") || (e.key >= "A" && e.key <= "Z")) {
-                const nextInput = globalInputs[index + 1];
-                if (nextInput) {
-                    setTimeout(() => nextInput.focus(), 10);
-                }
+    // Replace your commented-out loop in Snow.js with this:
+globalInputs.forEach((input, index) => {
+    // 1. Move Forward logic: Fires only when a character is actually typed
+    input.addEventListener('input', () => {
+        if (input.value.length >= 1) {
+            const nextInput = globalInputs[index + 1];
+            if (nextInput) {
+                nextInput.focus();
             }
-            if (e.key === "Backspace" && input.value === "") {
+        }
+    });
+
+    // 2. Navigation logic: Handles Backspace and Arrow keys
+    input.addEventListener('keydown', (e) => {
+        if (e.key === "Backspace") {
+            // If current cell is empty, jump focus to the previous one
+            if (input.value === "") {
                 const prevInput = globalInputs[index - 1];
                 if (prevInput) {
-                    setTimeout(() => prevInput.focus(), 10);
+                    prevInput.focus();
                 }
             }
-        });
+            // If cell is NOT empty, default browser behavior deletes the char
+            // but we stay in this cell (fixing your "jump forward" bug).
+        } else if (e.key === "ArrowLeft") {
+            const prevInput = globalInputs[index - 1];
+            if (prevInput) prevInput.focus();
+        } else if (e.key === "ArrowRight") {
+            const nextInput = globalInputs[index + 1];
+            if (nextInput) nextInput.focus();
+        } else if (e.key === "Enter") {
+            const nextInput = globalInputs[index + 1];
+            if (nextInput) nextInput.focus();
+        }
     });
+});
     
     table.addEventListener('input', function() {
         let allCorrect = true;

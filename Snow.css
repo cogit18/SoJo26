@@ -109,8 +109,8 @@ td {
 
 input {
     text-align: center;
-    width: 18px;
-    font-size: .7em;
+    width: 24px;
+    font-size: 1em;
 }
 
 .entry {
@@ -122,11 +122,18 @@ input {
 
 }
 
+/* 1. Tell the cell to align its content to the bottom */
+.fill-cell {
+    vertical-align: bottom;
+    height: 100%; /* Ensures the cell expands to the full rowspan height */
+}
+
+/* 2. Adjust the image inside */
 .fill-cell img {
-    width: 100%;
+    max-width: 100%;
     height: auto;
-    display: block;
-    object-fit: contain; /* Ensures the image fits without distortion */
+    display: block; /* Keeping this is fine if the parent TD handles alignment */
+    margin-top: auto; /* Helps push it down in some rendering engines */
 }
 
 /* Add this to ensure the cells stay compact */
@@ -186,4 +193,38 @@ input {
     border: 1px solid black; /* Added black border */
     border-radius: 5px;
     display: none; /* Hidden until solved */
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff; /* Must be solid to hide table rows behind it */
+    z-index: 1000;             /* Ensures it stays above the zigzag image */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000; /* Visual separator */
+}
+
+/* Optional: Make the header a bit more compact for mobile screens */
+.sticky-header img.center {
+    width: 60px; 
+    margin-bottom: 5px;
+}
+
+.sticky-header h1 {
+    font-size: 1.4em;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.scrambled-text {
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+    margin: 5px 0;
+}
+
+.intro-text {
+    font-size: 0.9em;
+    margin: 5px 0;
 }
