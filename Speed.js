@@ -44,6 +44,7 @@ const closeCongratsBtn = document.getElementById("closeCongrats");
 const closeHintBtn = document.getElementById("closeHint");
 const viewCongratsBtn = document.getElementById("viewCongratsBtn");
 const gpsStatus = document.getElementById("gps-status");
+const distanceDisplay = document.getElementById("distance-display");
 
 function decodeCoord(str) { return parseFloat(atob(str)); }
 
@@ -94,7 +95,23 @@ function updatePosition(position) {
     const lat = crd.latitude;
     const lon = crd.longitude;
     
-    // Check distances
+    // Update the UI to show tracking is active
+    const reachedCount = checkpoints.filter(c => c.reached).length;
+    if (reachedCount < checkpoints.length) {
+        gpsStatus.innerText = `Tracking Active - ${reachedCount}/${checkpoints.length} Checkpoints Reached`;
+        gpsStatus.style.color = "#007bff";
+    }
+
+    // Find the next unreached checkpoint to calculate distance to it
+    const nextCp = checkpoints.find(c => !c.reached);
+    if (nextCp && distanceDisplay) {
+        const targetLat = decodeCoord(nextCp.lat);
+        const targetLon = decodeCoord(nextCp.lon);
+        const distToNext = getDistanceInFeet(lat, lon, targetLat, targetLon);
+        distanceDisplay.innerText = `Distance to next: ${Math.round(distToNext)} ft`;
+    }
+
+    // Check distances for all checkpoints to see if we reached any
     checkpoints.forEach((cp) => {
         if (!cp.reached) {
             const targetLat = decodeCoord(cp.lat);
@@ -113,6 +130,10 @@ function updatePosition(position) {
 function handleSuccess() {
     gpsStatus.innerText = "All Checkpoints Reached!";
     gpsStatus.style.color = "#009f3c";
+    
+    if (distanceDisplay) {
+        distanceDisplay.innerText = "Distance to next: 0 ft";
+    }
 
     if (hintInterval) {
         clearInterval(hintInterval);
@@ -141,6 +162,7 @@ function initGPS() {
     if (QA_MODE) {
         gpsStatus.innerText = "QA Mode Active: Click checkpoints in order to reveal";
         gpsStatus.style.color = "#8a2be2"; 
+        if (distanceDisplay) distanceDisplay.innerText = "Distance to next: QA Override";
         
         checkpoints.forEach(cp => {
             const box = document.getElementById(cp.id);
