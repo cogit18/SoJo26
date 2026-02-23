@@ -1,4 +1,6 @@
 // --- CONFIGURATION & OBFUSCATION ---
+const QA_MODE = true; // SET TO FALSE FOR LIVE EVENT
+
 // Live coords: 40.56674, -112.00842
 const _0x1a = "NDAuNTY2NzQ="; 
 const _0x2b = "LTExMi4wMDg0Mg==";
@@ -25,6 +27,7 @@ const closeHintBtn = document.getElementById("closeHint");
 const viewCongratsBtn = document.getElementById("viewCongratsBtn");
 const gpsStatus = document.getElementById("gps-status");
 const distanceDisplay = document.getElementById("distance-display");
+const qaCheckBtn = document.getElementById("qaCheckBtn");
 
 function decodeCoord(str) { return parseFloat(atob(str)); }
 
@@ -45,8 +48,9 @@ function getDistanceInFeet(lat1, lon1, lat2, lon2) {
 function toRad(Value) {
     return Value * Math.PI / 180;
 }
+
 function updatePosition(position) {
-    if (puzzleSolved) return;
+    if (QA_MODE || puzzleSolved) return;
 
     const crd = position.coords;
     const targetLat = decodeCoord(_0x1a);
@@ -82,6 +86,10 @@ function handleSuccess() {
         timeRemaining = 0; 
         transformTimerToButton(); 
     }
+    
+    // Hide QA Button if it was used
+    if (qaCheckBtn) qaCheckBtn.style.display = "none";
+
     const congratsModal = document.getElementById("congratsModal");
     const viewCongratsBtn = document.getElementById("viewCongratsBtn");
     if (congratsModal) congratsModal.style.display = "block";
@@ -89,6 +97,8 @@ function handleSuccess() {
 }
 
 function handleError(error) {
+    if (QA_MODE) return;
+
     let msg = "GPS Error: ";
     switch(error.code) {
         case 1: msg = "Location Access Denied."; break;
@@ -101,6 +111,18 @@ function handleError(error) {
 }
 
 function initGPS() {
+    if (QA_MODE) {
+        gpsStatus.innerText = "QA Mode Active: Click 'QA Check' below";
+        gpsStatus.style.color = "#8a2be2"; 
+        distanceDisplay.innerText = "Distance: QA Override";
+        
+        if (qaCheckBtn) {
+            qaCheckBtn.style.display = "inline-block";
+            qaCheckBtn.addEventListener('click', handleSuccess);
+        }
+        return;
+    }
+
     if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
         gpsStatus.innerText = "HTTPS required for GPS.";
         gpsStatus.style.color = "red";
@@ -153,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startTimer();
     initGPS();
     
-    const congratsMsg = "PGgyPllvdSBtYWRlIGl0ITwvaDI+CiAgICAgICAgPHA+Tm93IGdldCByZWFkeSBmb3IgdGhlIG9wZW5pbmcgY2VyZW1vbmllcy4gSGF2ZSBhIHRlYW0gbWVtYmVyIGdvIGdldCB0aGUgU3BlZWRRdWl6emluZyBhcHAuIE9ubHkgb25lIHBlcnNvbiBwZXIgdGVhbSBuZWVkcyBpdC48L3A+";
+    const congratsMsg = "PGgyPllvdSBtYWRlIGl0ITwvaDI+CiAgICAgICAgPHA+Tm93IGdldCByZWFkeSBmb3IgdGhlIG9wZW5pbmcgY2VyZW1vbmllcy4gSGF2ZSB5b3VyIGRlc2lnbmF0ZWQgdGVhbSBtZW1iZXIgb3BlbiB0aGUgU3BlZWRRdWl6emluZyBhcHAsIG5hbWUgeW91ciB0ZWFtIHdpdGggeW91ciBjb3VudHJ5IG5hbWUsIGFuZCB1c2UgdGhlIHBpbiB0byBqb2luIHRoZSBnYW1lLiBPbmx5IG9uZSBwZXJzb24gcGVyIHRlYW0gc2hvdWxkIGRvIHRoaXMuPC9wPg==";
     const hintMsg = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPklmIHlvdSdyZSBzdHVyZ2dsaW5nIHRvIG1ha2UgaXQgd29yayBvbiBvbmUgcGhvbmUsIGhhdmUgYW5vdGhlciB0ZWFtIG1lbWJlciB0cnkuIFlvdSBjYW4gYWxzbyBnbyBsb29rIGF0IHlvdXIgc2V0dGluZ3MuPC9wPgogICAgICAgIDxwPmlPUzogU2V0dGluZ3MgPiBQcml2YWN5ICYgU2VjdXJpdHkgPiBMb2NhdGlvbiBTZXJ2aWNlcyA+IHlvdXIgd2ViIGJyb3dzZXIgKFNhZmFyaSwgQ2hyb21lLCBldGMuKSA+IEFzayBOZXh0IFRpbWU7IHRoZW4gcmVmcmVzaCB0aGUgd2Vic2l0ZSBhbmQgY2hvb3NlIGFsbG93LjwvcD4KICAgICAgICA8cD5BbmRyb2lkOiBTZXR0aW5ncyA+IExvY2F0aW9uID4gVHVybiBPTiBVc2UgTG9jYXRpb24gYW5kIGNoZWNrIEFwcCBwZXJtaXNzaW9ucyB0byBtYWtlIHN1cmUgeW91ciB3ZWIgYnJvd3NlciAoQ2hyb21lLCBldGMuKSBpcyBhbGxvd2VkIHRvIGFjY2VzcyBsb2NhdGlvbjsgdGhlbiByZWZyZXNoIHRoZSB3ZWJzaXRlIGFuZCBjaG9vc2UgYWxsb3cuPC9wPg==";
     
     document.getElementById('congratsContent').innerHTML = atob(congratsMsg);
