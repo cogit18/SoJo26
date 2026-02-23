@@ -210,6 +210,6 @@ function startNewGame() {
 }
 
 const congratsBase64 = "PGgyPkNvbmdyYXR1bGF0aW9ucyE8L2gyPgogICAgICAgICAgICA8cD5WaWN0b3J5ISBVbnNjcmFtYmxlIHRoZSBtaW5lIGZpZWxkIHRvIGtub3cgd2hlcmUgdG8gZ28gbmV4dC48L3A+";
-const hintBase64 = "PGgyPkhpbnQ8L2gyPgogICAgICAgICAgICA8cD5UaGUgbWVkYWwgaXMgb24gdGhlIGxpbmU7IGdldCBib2xkIGZvciB0aGUgZ29sZC4gUnVuIHRoZSBnYW1lIG9uIGFub3RoZXIgcGhvbmUuPC9wPg==";
+const hintBase64 = "PGgyPkhpbnQ8L2gyPgogICAgICAgIDxwPkV2ZXIgcGxheSBNaW5lc3dlZXBlcj8gWW91IGNhbiBHb29nbGUgaXQuPC9wPgoJPHA+UnVuIHRoZSBnYW1lIG9uIGFub3RoZXIgcGhvbmUgdG8gaGVscCBzcGVlZCB0aGluZ3MgdXAuPC9wPg==";
 document.getElementById('congratsContent').innerHTML = atob(congratsBase64);
 document.getElementById('hintContent').innerHTML = atob(hintBase64);
