@@ -1,5 +1,5 @@
 // --- CONFIGURATION & OBFUSCATION ---
-const QA_MODE = true; // SET TO FALSE FOR LIVE EVENT
+const QA_MODE = false; // SET TO FALSE FOR LIVE EVENT
 
 // Live coords: 40.56674, -112.00842
 const _0x1a = "NDAuNTY2NzQ="; 
