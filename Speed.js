@@ -9,29 +9,29 @@ let hintInterval = null;
 const checkpoints = [
     {
         id: "stanza1",
-        lat: "NDAuNTc4Mjc=", // 40.57827
-        lon: "LTExMi4wMDI5NA==", // -112.00294
+        lat: "NDAuNTc4Mjc=",
+        lon: "LTExMi4wMDI5NA==",
         text: "T3V0IG9mIHRoZSBuaWdodCB0aGF0IGNvdmVycyBtZSw8YnI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7QmxhY2sgYXMgdGhlIHBpdCBmcm9tIHBvbGUgdG8gcG9sZSw8YnI+SSB0aGFuayB3aGF0ZXZlciBnb2RzIG1heSBiZTxicj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtGb3IgbXkgdW5jb25xdWVyYWJsZSBzb3VsLg==",
         reached: false
     },
     {
         id: "stanza2",
-        lat: "NDAuNTc2NTk=", // 40.57659
-        lon: "LTExMi4wMDI5NA==", // -112.00294
+        lat: "NDAuNTc3Ng==",
+        lon: "LTExMi4wMDI5Mg==",
         text: "SW4gdGhlIGZlbGwgY2x1dGNoIG9mIGNpcmN1bXN0YW5jZTxicj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtJIGhhdmUgbm90IHdpbmNlZCBub3IgY3JpZWQgYWxvdWQuPGJyPlVuZGVyIHRoZSBibHVkZ2VvbmluZ3Mgb2YgY2hhbmNlPGJyPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO015IGhlYWQgaXMgYmxvb2R5LCBidXQgdW5ib3dlZC4=",
         reached: false
     },
     {
         id: "stanza3",
-        lat: "NDAuNTc2ODE=", // 40.57681
-        lon: "LTExMi4wMDE4OQ==", // -112.00189
+        lat: "NDAuNTc3NTg=",
+        lon: "LTExMi4wMDE4OQ==",
         text: "QmV5b25kIHRoaXMgcGxhY2Ugb2Ygd3JhdGggYW5kIHRlYXJzPGJyPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO0xvb21zIGJ1dCB0aGUgSG9ycm9yIG9mIHRoZSBzaGFkZSw8YnI+QW5kIHlldCB0aGUgbWVuYWNlIG9mIHRoZSB5ZWFyczxicj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtGaW5kcyBhbmQgc2hhbGwgZmluZCBtZSB1bmFmcmFpZC4=",
         reached: false
     },
     {
         id: "stanza4",
-        lat: "NDAuNTc4NDU=", // 40.57845
-        lon: "LTExMi4wMDE5", // -112.0019
+        lat: "NDAuNTc4ODY=",
+        lon: "LTExMi4wMDI0NA==",
         text: "SXQgbWF0dGVycyBub3QgaG93IHN0cmFpdCB0aGUgZ2F0ZSw8YnI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7SG93IGNoYXJnZWQgd2l0aCBwdW5pc2htZW50cyB0aGUgc2Nyb2xsLDxicj5JIGFtIHRoZSBtYXN0ZXIgb2YgbXkgZmF0ZSw8YnI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7SSBhbSB0aGUgY2FwdGFpbiBvZiBteSBzb3VsLg==",
         reached: false
     }
