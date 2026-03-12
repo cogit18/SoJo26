@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SoJo26 | Opening Ceremony</title>
+    <link rel="icon" href="images/favicon.svg?v1" type="image/x-icon" />
+    <link rel="stylesheet" href="Trivia.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+    <div class="content">
+        <img class="center" src="images/Olympic_Rings.svg" alt="Olympic Rings">
+        <h1>Opening Ceremony</h1>
+        
+        <div id="modeScreen">
+            <p style="text-align: center;">How are you playing today?</p>
+            <button id="btnPlayLive" class="action-btn" style="margin-bottom: 15px;">Play Live (Multiplayer)</button>
+            <button id="btnPlaySolo" class="action-btn" style="background-color: #555;">Play Solo (vs Bots)</button>
+        </div>
+
+        <div id="setupScreen" style="display: none;">
+            <p style="text-align: center;" id="selectionSubtitle">Select your team to begin.</p>
+            <div class="team-grid" id="teamSelectionGrid"></div>
+            <div id="waitingForGameBtn" style="text-align: center; margin-top: 15px; display: none; font-weight: bold; color: #00529b;">
+                Waiting for Host to start the game...
+            </div>
+            <button id="hostStartGameBtn" class="action-btn" style="display: none; background-color: #009f3c;">Start Game</button>
+        </div>
+
+        <div id="gameScreen" style="display: none;">
+            <div id="preTimerContainer" class="timer-box pre-timer">
+                Timer starts in: <span id="preTimerDisplay" style="display: inline-block; width: 1.2em; text-align: right; font-variant-numeric: tabular-nums;">5</span>s
+            </div>
+            <div id="activeTimerContainer" class="timer-box active-timer" style="display: none;">
+                Time Remaining: <span id="timerDisplay" style="display: inline-block; width: 2.2em; text-align: right; font-variant-numeric: tabular-nums;">10.0</span>s
+            </div>
+            
+            <p id="questionText" class="question-text"></p>
+            
+            <div style="text-align: center;">
+                <p style="font-weight: bold; margin-bottom: 5px; color: #555;">Your Answer</p>
+                <input type="text" id="userAnswer" placeholder="0" readonly disabled>
+            </div>
+            
+            <div class="keypad">
+                <button class="keypad-btn num-key" data-val="1" disabled>1</button>
+                <button class="keypad-btn num-key" data-val="2" disabled>2</button>
+                <button class="keypad-btn num-key" data-val="3" disabled>3</button>
+                <button class="keypad-btn num-key" data-val="4" disabled>4</button>
+                <button class="keypad-btn num-key" data-val="5" disabled>5</button>
+                <button class="keypad-btn num-key" data-val="6" disabled>6</button>
+                <button class="keypad-btn num-key" data-val="7" disabled>7</button>
+                <button class="keypad-btn num-key" data-val="8" disabled>8</button>
+                <button class="keypad-btn num-key" data-val="9" disabled>9</button>
+                <button class="keypad-btn delete-btn" id="keypadDelete" disabled>⌫</button>
+                <button class="keypad-btn num-key" data-val="0" disabled>0</button>
+                <button class="keypad-btn submit-btn" id="submitAnswerBtn" disabled>Submit</button>
+            </div>
+        </div>
+
+        <div id="roundResultsScreen" style="display: none; text-align: center;">
+            <h2>Round Over!</h2>
+            <p id="correctAnswerDisplay" class="results-correct-ans"></p>
+            
+            <div class="winner-recognition">
+                <img id="resultWinnerFlag" src="" alt="Flag" class="result-flag" style="display:none;">
+                <span id="roundWinnerDisplay" class="results-winner-text"></span>
+            </div>
+
+            <div class="anecdote-container">
+                <p id="anecdoteText"></p>
+            </div>
+
+            <button id="viewCongratsBtn" class="action-btn" style="display: none; background-color: #009f3c; margin-top: 10px;">View Next Clue</button>
+
+            <div id="autoAdvanceMsg" style="display: none; margin-top: 15px; font-weight: bold; color: #555;">
+                Leaderboard in <span id="autoAdvanceTimer" style="display: inline-block; width: 1.2em; text-align: right; font-variant-numeric: tabular-nums;">10</span>s
+            </div>
+        </div>
+
+        <div id="leaderboardScreen" style="display: none;">
+            <h2>Race Standings</h2>
+            <p style="text-align: center; font-size: 0.9em; margin-bottom: 15px;">Winners get their next clue. Everyone else gets another question!</p>
+            <table id="leaderboardTable" width="100%">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Team</th>
+                        <th>Guess</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+            
+            <div id="lbAutoAdvanceMsg" style="text-align: center; margin-top: 20px; font-weight: bold; color: #555; display: none;">
+                Next question in <span id="lbAutoAdvanceTimer" style="display: inline-block; width: 1.2em; text-align: right; font-variant-numeric: tabular-nums;">10</span>s
+            </div>
+        </div>
+
+        <div id="congratsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeCongrats">&times;</span>
+                <h2 style="color: #009f3c;">You Won!</h2>
+                <div style="padding: 15px; background-color: #f0f8ff; border: 1px dashed #00529b; margin-bottom: 15px;">
+                    <strong>YOUR NEXT CLUE:</strong><br>
+                    <a href="/SkiMo2.html">Click here</a> to get your directions to the next location! 
+                </div>
+            </div>
+        </div>
+
+        <p></p>
+        <div class="wrapper">
+            <div class="row">
+                <div class="icon"><img src="images/SkiMountaineering.svg"></div>
+                <div class="icon"><img src="images/ShortTrackSpeedSkating.svg"></div>
+                <div class="icon"><img src="images/Snowboard.svg"></div>
+                <div class="icon"><img src="images/Skeleton.svg"></div>
+                <div class="icon"><img src="images/Curling.svg"></div>
+                <div class="icon"><img src="images/Biathlon.svg"></div>
+                <div class="icon"><img src="images/FreestyleSkiing.svg"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="Trivia.js"></script>
+</body>
+</html>
