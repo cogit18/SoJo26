@@ -14,9 +14,13 @@ function xorDecrypt(t) {
     }
 }
 
-// GPS Constants
-const TARGET_LAT = 40.58072;
-const TARGET_LON = -111.9904;
+// Encrypted GPS Coordinates (Replace these placeholders with your XOR'd Base64 strings)
+const ENCRYPTED_LAT = "BQQfAAECAQc=";
+const ENCRYPTED_LON = "HAUABBcLDwUH";
+
+// Decoded GPS Constants
+const TARGET_LAT = parseFloat(xorDecrypt(ENCRYPTED_LAT));
+const TARGET_LON = parseFloat(xorDecrypt(ENCRYPTED_LON));
 const TARGET_DISTANCE_FEET = 30;
 
 // Application State
@@ -72,6 +76,7 @@ function startHintTimer() {
             clearInterval(hintInterval);
             transformTimerToButton();
             if (!puzzleSolved) {
+                showHint(); // Auto-pop the hint modal
                 startValidationTimer(); // Start the 2nd timer immediately after the 1st
             }
             return;
@@ -135,7 +140,8 @@ function validateInputs() {
         const viewCongratsBtn = document.getElementById("viewCongratsBtn");
 
         if (valContainer) valContainer.style.display = "inline";
-        if (valTimer) valTimer.innerHTML = '<span style="color: #009f3c; font-weight: bold;">Complete</span>';
+        // Changed "Complete" to "Active"
+        if (valTimer) valTimer.innerHTML = '<span style="color: #009f3c; font-weight: bold;">Active</span>';
         table.querySelectorAll("input").forEach(input => input.parentElement.style.backgroundColor = "#009f3c");
         
         if (congratsModal) congratsModal.style.display = "block";
@@ -211,14 +217,16 @@ function initGPS() {
     const qaCheckBtn = document.getElementById("qaCheckBtn");
 
     if (QA_MODE) {
+        // Hide the status text while QA mode is active
         if (gpsStatus) {
-            gpsStatus.innerText = "QA Mode Active: Click 'QA Check' below";
-            gpsStatus.style.color = "#8a2be2";
+            gpsStatus.style.display = "none";
         }
         if (qaCheckBtn) {
             qaCheckBtn.style.display = "block";
             qaCheckBtn.addEventListener("click", () => {
                 qaCheckBtn.style.display = "none";
+                // Show the status text again so "Target Reached!" can be seen if needed
+                if (gpsStatus) gpsStatus.style.display = "block";
                 handleLocationSuccess();
             });
         }
@@ -273,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Decode and Inject Text
     const congratsMsg = "DVwDC35XQhVHWhFAWVAZXFNNRxVUQlRbTRMKGlsHDwhBC3VdWV4TXF8URV1cElRUQF5UQBFMVkcWU1pbVRRQQRlGXlxAFV1bUlRNW1lbE1xfFGZQSkYWf1xHVVVfGwUdRgs=";
     const hintMsg = "DVwDC3FbWEEPGlkGDwlJDGJdWltaFFJHVkFFQlxHVRRSWUxXRRsTf0RHRRVNQE8VQFpcURFZXEZCUEFGEV1XFUBdQxJBUBFGVFRVXk8VQEFEV1oVWFxSFV9aXl8RQVYSQl1WFVJbXVpLQRZBXBVZUV1FGUtZQBNaREAfCRZCCA==";
-    const locationMsg = "DVwDC2BdQxV1WkRaVRVNWlMVYEVeQBAJFloECw9cXFMRRktRCxJaWFBTVEYWYV1cflofXkFSHhJXWUcIFnheVlhGX1pdFWNRUFZRV1ISE1ZdVUJGBBVaWlBURV1eWxRbW1IUCw1EDwlYEl5HVlMME35HXFtYQQEbWUBcWR4MdVlaVloUWVBLVwoaUgsRQF4VXldCFUBBUEZFUF0SWVsTQVlREWZSWxZ4XFxfQFBcV1dTR1pbVhRUQ1xcQhsPGkEK";
+    const locationMsg = "DVwDC2BdQxV1WkRaVRVNWlMVYEVeQBAJFloECw9cXFMRRktRCxJaWFBTVEYWYV1cflofXkFSHhJXWUcIFnheVlhGX1pdFWNRUFZRV1ISE1ZdVUJGBBVaWlBURV1eWxRbW1IUCw1EDwlYEl5HVlMMEx5mVnhZBwUafkZYUFdGBBtbQVxYFgt6Xl9WWBVZUUNQBR1XCxNBXhRWUE0SRUFSR0VRVRVWXBZBW1ARZ1pcGX9ZXF1BUF1fUFxAX1tUFVRCVFtNHAoaQws=";
     
     const cContent = document.getElementById("congratsContent");
     const hContent = document.getElementById("hintContent");
