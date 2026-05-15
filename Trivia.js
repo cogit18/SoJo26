@@ -59,9 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isLiveMode) return;
         const players = snapshot.val() || {};
         const playerArray = Object.keys(players).map(id => ({ id, ...players[id] }));
+        
+        // Sort by joinedAt to find the person who joined first (the Host)
         playerArray.sort((a, b) => a.joinedAt - b.joinedAt);
 
-        // FIX: Check the first index of the array for the Host ID
+        // CORRECTED FIX: Check the first element of the sorted array
         if (playerArray.length > 0 && playerArray.id === myId) {
             isHost = true;
         } else {
@@ -70,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (screens.setup.style.display === "block") {
             renderTeamSelection(playerArray);
-            // Reactive Button Check: Show start button for host once a team is picked
+            // Reactive Button Check: This ensures the button appears immediately for the host
             if (userTeam) {
                 document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
                 document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
