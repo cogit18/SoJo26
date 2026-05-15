@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function hideAllScreens() { Object.values(screens).forEach(s => s.style.display = "none"); }
 
-    // --- NETWORK HANDLING ---
     function broadcastEvent(type, payload) {
         db.ref('trivia_events').push({
             type, payload: payload || {}, timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -55,23 +54,30 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.type === 'ROUND_RESULTS') handleNetworkRoundResults(event.payload);
     });
 
-    // Host Logic: Listen for player list
+    // Host Logic & Presence
     db.ref('players').on('value', (snapshot) => {
+        if (!isLiveMode) return;
         const players = snapshot.val() || {};
         const playerArray = Object.keys(players).map(id => ({ id, ...players[id] }));
         playerArray.sort((a, b) => a.joinedAt - b.joinedAt);
 
-        // First player in database is the host
+        // FIX: Check the first index of the array for the Host ID
         if (playerArray.length > 0 && playerArray.id === myId) {
             isHost = true;
+        } else {
+            isHost = false;
         }
 
         if (screens.setup.style.display === "block") {
             renderTeamSelection(playerArray);
+            // Reactive Button Check: Show start button for host once a team is picked
+            if (userTeam) {
+                document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
+                document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
+            }
         }
     });
 
-    // --- UI ACTIONS ---
     document.getElementById("btnPlayLive").onclick = () => {
         isLiveMode = true; hideAllScreens(); screens.setup.style.display = "block";
         db.ref('players/' + myId).set({ team: "", joinedAt: firebase.database.ServerValue.TIMESTAMP });
@@ -105,9 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.onclick = () => {
                 userTeam = team;
                 if (isLiveMode) db.ref('players/' + myId).update({ team });
-                renderTeamSelection(playerArray); // Refresh visuals
+                renderTeamSelection(playerArray);
                 
-                // Show start button only to host
                 document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
                 document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
             };
@@ -121,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
         hostTriggerNextQuestion();
     };
 
-    // --- GAMEPLAY ---
     function hostTriggerNextQuestion() {
         db.ref('asked_questions').once('value', (snap) => {
             const asked = snap.val() ? Object.values(snap.val()) : [];
@@ -180,7 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateHostResults() {
         const actual = currentActiveQuestion.a;
-        // Bot logic
         allTeamsList.forEach(t => {
             if (!currentRoundResults.find(r => r.team === t)) {
                 const botGuess = Math.round(actual + (actual * (Math.random() * 0.4 - 0.2)));
@@ -258,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Keypad Logic
     document.querySelectorAll('.num-key').forEach(btn => {
         btn.onclick = () => { document.getElementById('userAnswer').value += btn.dataset.val; };
     });
