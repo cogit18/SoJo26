@@ -53,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
     // 2. NETWORK EVENT LISTENER
     // ---------------------------------------------------------
-    db.ref('trivia_events').orderByChild('timestamp').startAt(connectTime).on('child_added', (snapshot) => {
+    // Buffering connectTime by 10s ensures we don't miss our own start event 
+    // due to system clock desync between your computer and Firebase.
+    db.ref('trivia_events').orderByChild('timestamp').startAt(connectTime - 10000).on('child_added', (snapshot) => {
         const event = snapshot.val();
         if (event.type === 'GAME_START') hideAllScreens();
         if (event.type === 'START_QUESTION') handleNetworkStartQuestion(event.payload);
@@ -69,16 +71,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const players = snapshot.val() || {};
         latestPlayerList = Object.keys(players).map(id => ({ id, ...players[id] }));
         
-        // Sort by joinedAt. The person who joined first is the "Acting Host" 
-        // who handles bot logic, but ANYONE can click the start button.
+        // Sort by joinedAt to determine the "Acting Host" (earliest joiner)
         latestPlayerList.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+        
+        // FIX: Check index to see if I am the earliest joiner
         isActingHost = (latestPlayerList.length > 0 && latestPlayerList.id === myId);
 
         if (screens.setup.style.display === "block") {
             renderTeamSelection(latestPlayerList);
             updateLobbyStatus(latestPlayerList);
             
-            // SHOW START BUTTON TO ANYONE WHO HAS SELECTED A TEAM
+            // SHOW START BUTTON TO ANY PLAYER ONCE THEY HAVE SELECTED A TEAM
             if (userTeam) {
                 document.getElementById("hostStartGameBtn").style.display = "block";
                 document.getElementById("hostStartGameBtn").textContent = "Start Tournament";
@@ -147,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------
-    // 4. START GAME LOGIC (ANY PLAYER)
+    // 4. START GAME LOGIC
     // ---------------------------------------------------------
     document.getElementById("hostStartGameBtn").onclick = () => {
         if (isLiveMode) {
@@ -156,13 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const proceed = confirm(`Warning: ${pending} player(s) haven't selected a country yet. Start anyway?`);
                 if (!proceed) return;
             }
-            // Clear previous session data
             db.ref('asked_questions').remove();
         }
         
         broadcastEvent('GAME_START');
-        // We only trigger the first question logic if we are the acting host 
-        // to avoid duplicate questions being pushed.
+        // Only the Acting Host pushes the first question to avoid duplicates
         if (isActingHost || !isLiveMode) {
             hostTriggerNextQuestion();
         }
@@ -181,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------
-    // 5. GAMEPLAY & TIMERS
+    // 5. GAMEPLAY LOGIC
     // ---------------------------------------------------------
     function handleNetworkStartQuestion(payload) {
         currentActiveQuestion = payload;
@@ -229,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateHostResults() {
         const actual = currentActiveQuestion.a;
-        // Fill in bot scores for any country not picked by a human
+        // Fill bots
         allTeamsList.forEach(t => {
             if (!currentRoundResults.find(r => r.team === t)) {
                 const botGuess = Math.round(actual + (actual * (Math.random() * 0.4 - 0.2)));
@@ -265,10 +266,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         let sec = 8;
         const timer = document.getElementById("autoAdvanceTimer");
-        timer.textContent = sec;
+        if (timer) timer.textContent = sec;
         clearInterval(hostLockInterval);
         hostLockInterval = setInterval(() => {
-            timer.textContent = --sec;
+            sec--;
+            if (timer) timer.textContent = sec;
             if (sec <= 0) { clearInterval(hostLockInterval); renderLeaderboard(); }
         }, 1000);
     }
@@ -294,9 +296,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (localAskedCount < questionsData.length) {
             let sec = 8;
             const timer = document.getElementById("lbAutoAdvanceTimer");
-            timer.textContent = sec;
+            if (timer) timer.textContent = sec;
             hostLockInterval = setInterval(() => {
-                timer.textContent = --sec;
+                sec--;
+                if (timer) timer.textContent = sec;
                 if (sec <= 0) { 
                     clearInterval(hostLockInterval); 
                     if (isActingHost) hostTriggerNextQuestion(); 
@@ -318,6 +321,9 @@ document.addEventListener("DOMContentLoaded", () => {
         inp.value = inp.value.slice(0, -1);
     };
 
+    // ---------------------------------------------------------
+    // 7. QUESTIONS DATA
+    // ---------------------------------------------------------
     const questionsData = [
         { q: "How many total career medals does Marit Bjørgen hold (the all-time Winter Olympic record)?", a: 15, anecdote: "8 of them gold, 4 silver, 3 bronze. All in cross country skiing events." },
         { q: "How many years has snowboarding been an official Olympic event?", a: 28, anecdote: "1998 in Nagano, Japan. Shaun White is still the GOAT with 3 gold medals to his name." },
