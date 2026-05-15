@@ -26,10 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const allTeamsList = Object.keys(teamCodes);
 
     let isLiveMode = false, isHost = false, userTeam = "";
+    let latestPlayers = []; // Global reference for the start button logic
     let teamScores = {}; 
     let currentActiveQuestion = null, currentRoundResults = [], localAskedCount = 0;
     let gameLoopInterval, hostLockInterval;
-    let latestPlayerArray = []; // To keep track for the start button prompt
 
     const screens = { 
         mode: document.getElementById("modeScreen"), 
@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Listen for Network Events
     db.ref('trivia_events').orderByChild('timestamp').startAt(connectTime).on('child_added', (snapshot) => {
         const event = snapshot.val();
         if (event.type === 'GAME_START') hideAllScreens();
@@ -55,24 +56,27 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.type === 'ROUND_RESULTS') handleNetworkRoundResults(event.payload);
     });
 
-    // Host Logic & Presence
+    // --- PLAYER & LOBBY LOGIC ---
     db.ref('players').on('value', (snapshot) => {
         if (!isLiveMode) return;
         const players = snapshot.val() || {};
-        latestPlayerArray = Object.keys(players).map(id => ({ id, ...players[id] }));
-        latestPlayerArray.sort((a, b) => a.joinedAt - b.joinedAt);
+        latestPlayers = Object.keys(players).map(id => ({ id, ...players[id] }));
+        
+        // Sort by joinedAt to determine the Host
+        latestPlayers.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
 
-        // CORRECTED FIX: Check the first index for the Host ID
-        if (latestPlayerArray.length > 0 && latestPlayerArray.id === myId) {
+        // Determine if I am the Host
+        if (latestPlayers.length > 0 && latestPlayers.id === myId) {
             isHost = true;
         } else {
             isHost = false;
         }
 
         if (screens.setup.style.display === "block") {
-            updateLobbyStatus(latestPlayerArray);
-            renderTeamSelection(latestPlayerArray);
+            renderTeamSelection(latestPlayers);
+            updateLobbyStatus(latestPlayers);
             
+            // Show the appropriate button ONLY if I have selected a team
             if (userTeam) {
                 document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
                 document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
@@ -82,17 +86,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateLobbyStatus(playerArray) {
         const subtitle = document.getElementById("selectionSubtitle");
-        if (!subtitle) return;
-
         const total = playerArray.length;
-        const pending = playerArray.filter(p => !p.team).length;
+        const picking = playerArray.filter(p => !p.team).length;
+        const ready = total - picking;
 
         if (!userTeam) {
-            subtitle.innerHTML = "<b>Select Your Nation:</b>";
+            subtitle.innerHTML = `<b>Select Your Nation:</b>`;
         } else {
-            let statusMsg = "<b>Waiting for other players...</b><br>";
-            statusMsg += `<span style="font-size: 0.8em; color: #666;">${total} in lobby (${pending} still picking)</span>`;
-            subtitle.innerHTML = statusMsg;
+            subtitle.innerHTML = `
+                <div style="color: #00529b; margin-bottom: 10px;"><b>Waiting for tournament to begin...</b></div>
+                <div style="font-size: 0.85em; color: #666;">
+                    Lobby: ${total} players connected<br>
+                    (${ready} ready, ${picking} still selecting)
+                </div>
+            `;
         }
     }
 
@@ -123,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.innerHTML = `
                 <img src="https://flagcdn.com/w80/${teamCodes[team]}.png" class="leaderboard-flag">
                 <span style="font-size:0.9em">${team}</span>
-                ${team === userTeam ? '<b style="font-size:0.7em; color:#009f3c">YOU</b>' : ''}
+                ${team === userTeam ? '<b style="font-size:0.7em; color:#009f3c"><br>YOU</b>' : ''}
             `;
 
             btn.onclick = () => {
@@ -131,23 +138,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isLiveMode) db.ref('players/' + myId).update({ team });
                 renderTeamSelection(playerArray);
                 updateLobbyStatus(playerArray);
-                
-                document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
-                document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
             };
             grid.appendChild(btn);
         });
     }
 
+    // --- START GAME LOGIC ---
     document.getElementById("hostStartGameBtn").onclick = () => {
-        // Warning if players haven't selected a team
-        const pending = latestPlayerArray.filter(p => !p.team).length;
-        if (isLiveMode && pending > 0) {
-            const proceed = confirm(`Wait! ${pending} player(s) haven't selected a team yet. Start tournament anyway?`);
-            if (!proceed) return;
+        if (isLiveMode) {
+            const pending = latestPlayers.filter(p => !p.team).length;
+            if (pending > 0) {
+                const proceed = confirm(`Warning: ${pending} player(s) have not selected a country yet. Start anyway?`);
+                if (!proceed) return;
+            }
+            db.ref('asked_questions').remove();
         }
-
-        if (isLiveMode) db.ref('asked_questions').remove();
         broadcastEvent('GAME_START');
         hostTriggerNextQuestion();
     };
@@ -164,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // --- GAMEPLAY LOGIC ---
     function handleNetworkStartQuestion(payload) {
         currentActiveQuestion = payload;
         localAskedCount++;
@@ -210,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateHostResults() {
         const actual = currentActiveQuestion.a;
+        // Host adds bots for any team NOT present in the results
         allTeamsList.forEach(t => {
             if (!currentRoundResults.find(r => r.team === t)) {
                 const botGuess = Math.round(actual + (actual * (Math.random() * 0.4 - 0.2)));
@@ -287,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // --- KEYPAD LOGIC ---
     document.querySelectorAll('.num-key').forEach(btn => {
         btn.onclick = () => { document.getElementById('userAnswer').value += btn.dataset.val; };
     });
