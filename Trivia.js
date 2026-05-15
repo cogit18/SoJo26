@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // ---------------------------------------------------------
+    // 1. FIREBASE CONFIGURATION
+    // ---------------------------------------------------------
     const firebaseConfig = {
         apiKey: "AIzaSyAgl_PrRKY15d4P9I75zDjB_joD-9tyyKE",
         authDomain: "sojo26-trivia.firebaseapp.com",
@@ -25,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const allTeamsList = Object.keys(teamCodes);
 
-    let isLiveMode = false, isHost = false, userTeam = "";
-    let latestPlayers = []; // Global reference for the start button logic
+    let isLiveMode = false, isActingHost = false, userTeam = "";
+    let latestPlayerList = []; 
     let teamScores = {}; 
     let currentActiveQuestion = null, currentRoundResults = [], localAskedCount = 0;
     let gameLoopInterval, hostLockInterval;
@@ -47,57 +50,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Listen for Network Events
+    // ---------------------------------------------------------
+    // 2. NETWORK EVENT LISTENER
+    // ---------------------------------------------------------
     db.ref('trivia_events').orderByChild('timestamp').startAt(connectTime).on('child_added', (snapshot) => {
         const event = snapshot.val();
         if (event.type === 'GAME_START') hideAllScreens();
         if (event.type === 'START_QUESTION') handleNetworkStartQuestion(event.payload);
-        if (event.type === 'PLAYER_SUBMIT') { if (isHost) currentRoundResults.push(event.payload); }
+        if (event.type === 'PLAYER_SUBMIT') { if (isActingHost) currentRoundResults.push(event.payload); }
         if (event.type === 'ROUND_RESULTS') handleNetworkRoundResults(event.payload);
     });
 
-    // --- PLAYER & LOBBY LOGIC ---
+    // ---------------------------------------------------------
+    // 3. LOBBY & PLAYER PRESENCE
+    // ---------------------------------------------------------
     db.ref('players').on('value', (snapshot) => {
         if (!isLiveMode) return;
         const players = snapshot.val() || {};
-        latestPlayers = Object.keys(players).map(id => ({ id, ...players[id] }));
+        latestPlayerList = Object.keys(players).map(id => ({ id, ...players[id] }));
         
-        // Sort by joinedAt to determine the Host
-        latestPlayers.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
-
-        // Determine if I am the Host
-        if (latestPlayers.length > 0 && latestPlayers.id === myId) {
-            isHost = true;
-        } else {
-            isHost = false;
-        }
+        // Sort by joinedAt. The person who joined first is the "Acting Host" 
+        // who handles bot logic, but ANYONE can click the start button.
+        latestPlayerList.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+        isActingHost = (latestPlayerList.length > 0 && latestPlayerList.id === myId);
 
         if (screens.setup.style.display === "block") {
-            renderTeamSelection(latestPlayers);
-            updateLobbyStatus(latestPlayers);
+            renderTeamSelection(latestPlayerList);
+            updateLobbyStatus(latestPlayerList);
             
-            // Show the appropriate button ONLY if I have selected a team
+            // SHOW START BUTTON TO ANYONE WHO HAS SELECTED A TEAM
             if (userTeam) {
-                document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
-                document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
+                document.getElementById("hostStartGameBtn").style.display = "block";
+                document.getElementById("hostStartGameBtn").textContent = "Start Tournament";
+                document.getElementById("waitingForGameBtn").style.display = "none";
             }
         }
     });
 
     function updateLobbyStatus(playerArray) {
         const subtitle = document.getElementById("selectionSubtitle");
+        if (!subtitle) return;
+
         const total = playerArray.length;
-        const picking = playerArray.filter(p => !p.team).length;
-        const ready = total - picking;
+        const pending = playerArray.filter(p => !p.team).length;
+        const ready = total - pending;
 
         if (!userTeam) {
-            subtitle.innerHTML = `<b>Select Your Nation:</b>`;
+            subtitle.innerHTML = "<b>Select Your Nation:</b>";
         } else {
             subtitle.innerHTML = `
-                <div style="color: #00529b; margin-bottom: 10px;"><b>Waiting for tournament to begin...</b></div>
+                <div style="color: #00529b; margin-bottom: 5px;"><b>Waiting for tournament to begin...</b></div>
                 <div style="font-size: 0.85em; color: #666;">
-                    Lobby: ${total} players connected<br>
-                    (${ready} ready, ${picking} still selecting)
+                    ${total} in lobby (${ready} ready, ${pending} still picking)
                 </div>
             `;
         }
@@ -110,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     document.getElementById("btnPlaySolo").onclick = () => {
-        isLiveMode = false; isHost = true; hideAllScreens(); screens.setup.style.display = "block";
+        isLiveMode = false; isActingHost = true; hideAllScreens(); screens.setup.style.display = "block";
         renderTeamSelection([]);
     };
 
@@ -130,31 +134,38 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.innerHTML = `
                 <img src="https://flagcdn.com/w80/${teamCodes[team]}.png" class="leaderboard-flag">
                 <span style="font-size:0.9em">${team}</span>
-                ${team === userTeam ? '<b style="font-size:0.7em; color:#009f3c"><br>YOU</b>' : ''}
+                ${team === userTeam ? '<br><b style="font-size:0.7em; color:#009f3c">YOU</b>' : ''}
             `;
 
             btn.onclick = () => {
                 userTeam = team;
                 if (isLiveMode) db.ref('players/' + myId).update({ team });
                 renderTeamSelection(playerArray);
-                updateLobbyStatus(playerArray);
             };
             grid.appendChild(btn);
         });
     }
 
-    // --- START GAME LOGIC ---
+    // ---------------------------------------------------------
+    // 4. START GAME LOGIC (ANY PLAYER)
+    // ---------------------------------------------------------
     document.getElementById("hostStartGameBtn").onclick = () => {
         if (isLiveMode) {
-            const pending = latestPlayers.filter(p => !p.team).length;
+            const pending = latestPlayerList.filter(p => !p.team).length;
             if (pending > 0) {
-                const proceed = confirm(`Warning: ${pending} player(s) have not selected a country yet. Start anyway?`);
+                const proceed = confirm(`Warning: ${pending} player(s) haven't selected a country yet. Start anyway?`);
                 if (!proceed) return;
             }
+            // Clear previous session data
             db.ref('asked_questions').remove();
         }
+        
         broadcastEvent('GAME_START');
-        hostTriggerNextQuestion();
+        // We only trigger the first question logic if we are the acting host 
+        // to avoid duplicate questions being pushed.
+        if (isActingHost || !isLiveMode) {
+            hostTriggerNextQuestion();
+        }
     };
 
     function hostTriggerNextQuestion() {
@@ -169,7 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- GAMEPLAY LOGIC ---
+    // ---------------------------------------------------------
+    // 5. GAMEPLAY & TIMERS
+    // ---------------------------------------------------------
     function handleNetworkStartQuestion(payload) {
         currentActiveQuestion = payload;
         localAskedCount++;
@@ -195,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 clearInterval(gameLoopInterval);
                 if (!currentRoundResults.find(r => r.team === userTeam)) submitMyAnswer("NONE");
-                if (isHost) setTimeout(generateHostResults, 1200);
+                if (isActingHost) setTimeout(generateHostResults, 1200);
             }
         }, 100);
     }
@@ -210,13 +223,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function submitMyAnswer(guess) {
         const result = { team: userTeam, guess, time: 5.0 };
-        if (isLiveMode && !isHost) broadcastEvent('PLAYER_SUBMIT', result);
+        if (isLiveMode && !isActingHost) broadcastEvent('PLAYER_SUBMIT', result);
         else currentRoundResults.push(result);
     }
 
     function generateHostResults() {
         const actual = currentActiveQuestion.a;
-        // Host adds bots for any team NOT present in the results
+        // Fill in bot scores for any country not picked by a human
         allTeamsList.forEach(t => {
             if (!currentRoundResults.find(r => r.team === t)) {
                 const botGuess = Math.round(actual + (actual * (Math.random() * 0.4 - 0.2)));
@@ -286,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 timer.textContent = --sec;
                 if (sec <= 0) { 
                     clearInterval(hostLockInterval); 
-                    if (isHost) hostTriggerNextQuestion(); 
+                    if (isActingHost) hostTriggerNextQuestion(); 
                 }
             }, 1000);
         } else {
@@ -294,7 +307,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- KEYPAD LOGIC ---
+    // ---------------------------------------------------------
+    // 6. NUMERIC KEYPAD LOGIC
+    // ---------------------------------------------------------
     document.querySelectorAll('.num-key').forEach(btn => {
         btn.onclick = () => { document.getElementById('userAnswer').value += btn.dataset.val; };
     });
