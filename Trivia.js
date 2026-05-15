@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let teamScores = {}; 
     let currentActiveQuestion = null, currentRoundResults = [], localAskedCount = 0;
     let gameLoopInterval, hostLockInterval;
+    let latestPlayerArray = []; // To keep track for the start button prompt
 
     const screens = { 
         mode: document.getElementById("modeScreen"), 
@@ -58,27 +59,42 @@ document.addEventListener("DOMContentLoaded", () => {
     db.ref('players').on('value', (snapshot) => {
         if (!isLiveMode) return;
         const players = snapshot.val() || {};
-        const playerArray = Object.keys(players).map(id => ({ id, ...players[id] }));
-        
-        // Sort by joinedAt to find the person who joined first (the Host)
-        playerArray.sort((a, b) => a.joinedAt - b.joinedAt);
+        latestPlayerArray = Object.keys(players).map(id => ({ id, ...players[id] }));
+        latestPlayerArray.sort((a, b) => a.joinedAt - b.joinedAt);
 
-        // CORRECTED FIX: Check the first element of the sorted array
-        if (playerArray.length > 0 && playerArray.id === myId) {
+        // CORRECTED FIX: Check the first index for the Host ID
+        if (latestPlayerArray.length > 0 && latestPlayerArray.id === myId) {
             isHost = true;
         } else {
             isHost = false;
         }
 
         if (screens.setup.style.display === "block") {
-            renderTeamSelection(playerArray);
-            // Reactive Button Check: This ensures the button appears immediately for the host
+            updateLobbyStatus(latestPlayerArray);
+            renderTeamSelection(latestPlayerArray);
+            
             if (userTeam) {
                 document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
                 document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
             }
         }
     });
+
+    function updateLobbyStatus(playerArray) {
+        const subtitle = document.getElementById("selectionSubtitle");
+        if (!subtitle) return;
+
+        const total = playerArray.length;
+        const pending = playerArray.filter(p => !p.team).length;
+
+        if (!userTeam) {
+            subtitle.innerHTML = "<b>Select Your Nation:</b>";
+        } else {
+            let statusMsg = "<b>Waiting for other players...</b><br>";
+            statusMsg += `<span style="font-size: 0.8em; color: #666;">${total} in lobby (${pending} still picking)</span>`;
+            subtitle.innerHTML = statusMsg;
+        }
+    }
 
     document.getElementById("btnPlayLive").onclick = () => {
         isLiveMode = true; hideAllScreens(); screens.setup.style.display = "block";
@@ -114,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 userTeam = team;
                 if (isLiveMode) db.ref('players/' + myId).update({ team });
                 renderTeamSelection(playerArray);
+                updateLobbyStatus(playerArray);
                 
                 document.getElementById("hostStartGameBtn").style.display = isHost ? "block" : "none";
                 document.getElementById("waitingForGameBtn").style.display = isHost ? "none" : "block";
@@ -123,6 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("hostStartGameBtn").onclick = () => {
+        // Warning if players haven't selected a team
+        const pending = latestPlayerArray.filter(p => !p.team).length;
+        if (isLiveMode && pending > 0) {
+            const proceed = confirm(`Wait! ${pending} player(s) haven't selected a team yet. Start tournament anyway?`);
+            if (!proceed) return;
+        }
+
         if (isLiveMode) db.ref('asked_questions').remove();
         broadcastEvent('GAME_START');
         hostTriggerNextQuestion();
