@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
-    // 1. FIREBASE CONFIGURATION
+    // 1. FIREBASE CONFIGURATION & GAME DATA
     // ---------------------------------------------------------
     const firebaseConfig = {
         apiKey: "AIzaSyAgl_PrRKY15d4P9I75zDjB_joD-9tyyKE",
@@ -20,6 +20,29 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.setItem('trivia_myId', myId);
 
     const connectTime = Date.now();
+    
+    // Moved questions to the top to ensure they are available immediately
+    const questionsData = [
+        { q: "How many total career medals does Marit Bjørgen hold (the all-time Winter Olympic record)?", a: 15, anecdote: "8 of them gold, 4 silver, 3 bronze. All in cross country skiing events." },
+        { q: "How many years has snowboarding been an official Olympic event?", a: 28, anecdote: "1998 in Nagano, Japan. Shaun White is still the GOAT with 3 gold medals to his name." },
+        { q: "What is the total number of gold medal events scheduled for the Milano Cortina 2026 Games?", a: 116, anecdote: "Ice hockey, figure skating, and snowboarding were the most watched events." },
+        { q: "As of the 2026 Games how many total sports are included in the Winter Olympic program?", a: 16, anecdote: "Skiing (alpine, cross country, freestyle, nordic, jumping, mountaineering); Biathlon; Bobsled; Curling; Hockey; Luge; Skating (figure, speed, short-track); Snowboarding." },
+        { q: "How many years has it been since the first Winter Olympic Games were held?", a: 102, anecdote: "Chamonix, France in 1924. The same year that the summer games were held in Paris, France." },
+        { q: "After a 54 year hiatus, in what year did the Skeleton event return to the Winter Olympics?", a: 2002, anecdote: "It came back in Salt Lake in 2002 and has been a staple ever since." },
+        { q: "How many times has the United States hosted the winter Olympics?", a: 4, anecdote: "Lake Placid, NY (2x); Squaw Valley, CA; SLC, UT" },
+        { q: "In what year did Ski Mountaineering make its official debut as an Olympic sport?", a: 2026, anecdote: "SkiMo is the newest addition to the games." },
+        { q: "In meters, how far away are the shooting targets in the Biathalon?", a: 50, anecdote: "There are cave paintings of people hunting on skis in Norway." },
+        { q: "How many miles was the torch carried for the 2026 Olympics?", a: 7500, anecdote: "The torch traveled through every Italian province on its way to Milan." },
+        { q: "Norway won the most medals of any country in the 2026 winter Olympics. How many total medals did they win?", a: 41, anecdote: "Norway continues to dominate winter sports." },
+        { q: "How many torchbearers were there for the 2026 Olympics?", a: 10001, anecdote: "1 more than Paris, France in 2024." },
+        { q: "In what year did the \"Miracle on Ice\" take place at the Lake Placid Games?", a: 1980, anecdote: "The young US team beat the heavily favored Soviet Union team 4-3." },
+        { q: "How many athletes (to the nearest hundred) competed in the 2026 Winter Games?", a: 2900, anecdote: "The first games had 258; this year is the most ever." },
+        { q: "How many years old was American figure skater Scott Allen when he became the youngest individual male medalist in Winter history?", a: 14, anecdote: "He took bronze 2 days before his birthday in 1964." },
+        { q: "How many seats were in the stadium of the opening ceremonies for the 2026 winter Olympics?", a: 70000, anecdote: "The closing ceremonies were in a roman amphitheater seating 15,000." },
+        { q: "In what year did the Winter and Summer Olympics stop being held in the same calendar year?", a: 1994, anecdote: "Norway started the staggered year." },
+        { q: "What was the total number of nations that competed in the first Winter Olympics in Chamonix, France in 1924?", a: 16, anecdote: "There were 40 nations at the Summer Games that same year." }
+    ];
+
     const teamCodes = {
         "United States": "us", "Canada": "ca", "Japan": "jp", "Italy": "it", 
         "France": "fr", "Germany": "de", "United Kingdom": "gb", "Australia": "au", 
@@ -53,11 +76,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
     // 2. NETWORK EVENT LISTENER
     // ---------------------------------------------------------
-    // Buffering connectTime by 10s ensures we don't miss our own start event 
-    // due to system clock desync between your computer and Firebase.
     db.ref('trivia_events').orderByChild('timestamp').startAt(connectTime - 10000).on('child_added', (snapshot) => {
         const event = snapshot.val();
-        if (event.type === 'GAME_START') hideAllScreens();
+        
+        if (event.type === 'GAME_START') {
+            hideAllScreens();
+            // FIX: Only the Acting Host generates the first question to prevent duplicates.
+            // This ensures that even if a non-host clicks "Start", the host processes the logic.
+            if (isActingHost || !isLiveMode) {
+                if (isLiveMode) {
+                    // Wait for the old questions to clear before picking a new one
+                    db.ref('asked_questions').remove().then(() => {
+                        hostTriggerNextQuestion();
+                    });
+                } else {
+                    hostTriggerNextQuestion();
+                }
+            }
+        }
+        
         if (event.type === 'START_QUESTION') handleNetworkStartQuestion(event.payload);
         if (event.type === 'PLAYER_SUBMIT') { if (isActingHost) currentRoundResults.push(event.payload); }
         if (event.type === 'ROUND_RESULTS') handleNetworkRoundResults(event.payload);
@@ -74,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Sort by joinedAt to determine the "Acting Host" (earliest joiner)
         latestPlayerList.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
         
-        // FIX: Check index to see if I am the earliest joiner
         isActingHost = (latestPlayerList.length > 0 && latestPlayerList.id === myId);
 
         if (screens.setup.style.display === "block") {
@@ -159,14 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const proceed = confirm(`Warning: ${pending} player(s) haven't selected a country yet. Start anyway?`);
                 if (!proceed) return;
             }
-            db.ref('asked_questions').remove();
         }
         
+        // FIX: The button click ONLY broadcasts the event. 
+        // The event listener above handles deciding who triggers the question.
         broadcastEvent('GAME_START');
-        // Only the Acting Host pushes the first question to avoid duplicates
-        if (isActingHost || !isLiveMode) {
-            hostTriggerNextQuestion();
-        }
     };
 
     function hostTriggerNextQuestion() {
@@ -321,27 +354,4 @@ document.addEventListener("DOMContentLoaded", () => {
         inp.value = inp.value.slice(0, -1);
     };
 
-    // ---------------------------------------------------------
-    // 7. QUESTIONS DATA
-    // ---------------------------------------------------------
-    const questionsData = [
-        { q: "How many total career medals does Marit Bjørgen hold (the all-time Winter Olympic record)?", a: 15, anecdote: "8 of them gold, 4 silver, 3 bronze. All in cross country skiing events." },
-        { q: "How many years has snowboarding been an official Olympic event?", a: 28, anecdote: "1998 in Nagano, Japan. Shaun White is still the GOAT with 3 gold medals to his name." },
-        { q: "What is the total number of gold medal events scheduled for the Milano Cortina 2026 Games?", a: 116, anecdote: "Ice hockey, figure skating, and snowboarding were the most watched events." },
-        { q: "As of the 2026 Games how many total sports are included in the Winter Olympic program?", a: 16, anecdote: "Skiing (alpine, cross country, freestyle, nordic, jumping, mountaineering); Biathlon; Bobsled; Curling; Hockey; Luge; Skating (figure, speed, short-track); Snowboarding." },
-        { q: "How many years has it been since the first Winter Olympic Games were held?", a: 102, anecdote: "Chamonix, France in 1924. The same year that the summer games were held in Paris, France." },
-        { q: "After a 54 year hiatus, in what year did the Skeleton event return to the Winter Olympics?", a: 2002, anecdote: "It came back in Salt Lake in 2002 and has been a staple ever since." },
-        { q: "How many times has the United States hosted the winter Olympics?", a: 4, anecdote: "Lake Placid, NY (2x); Squaw Valley, CA; SLC, UT" },
-        { q: "In what year did Ski Mountaineering make its official debut as an Olympic sport?", a: 2026, anecdote: "SkiMo is the newest addition to the games." },
-        { q: "In meters, how far away are the shooting targets in the Biathalon?", a: 50, anecdote: "There are cave paintings of people hunting on skis in Norway." },
-        { q: "How many miles was the torch carried for the 2026 Olympics?", a: 7500, anecdote: "The torch traveled through every Italian province on its way to Milan." },
-        { q: "Norway won the most medals of any country in the 2026 winter Olympics. How many total medals did they win?", a: 41, anecdote: "Norway continues to dominate winter sports." },
-        { q: "How many torchbearers were there for the 2026 Olympics?", a: 10001, anecdote: "1 more than Paris, France in 2024." },
-        { q: "In what year did the \"Miracle on Ice\" take place at the Lake Placid Games?", a: 1980, anecdote: "The young US team beat the heavily favored Soviet Union team 4-3." },
-        { q: "How many athletes (to the nearest hundred) competed in the 2026 Winter Games?", a: 2900, anecdote: "The first games had 258; this year is the most ever." },
-        { q: "How many years old was American figure skater Scott Allen when he became the youngest individual male medalist in Winter history?", a: 14, anecdote: "He took bronze 2 days before his birthday in 1964." },
-        { q: "How many seats were in the stadium of the opening ceremonies for the 2026 winter Olympics?", a: 70000, anecdote: "The closing ceremonies were in a roman amphitheater seating 15,000." },
-        { q: "In what year did the Winter and Summer Olympics stop being held in the same calendar year?", a: 1994, anecdote: "Norway started the staggered year." },
-        { q: "What was the total number of nations that competed in the first Winter Olympics in Chamonix, France in 1924?", a: 16, anecdote: "There were 40 nations at the Summer Games that same year." }
-    ];
 });
