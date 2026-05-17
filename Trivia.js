@@ -16,6 +16,30 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
+    // ---------------------------------------------------------
+    // 2. TRIVIA QUESTIONS DATA (Moved to top for immediate access)
+    // ---------------------------------------------------------
+    const questionsData = [
+        { q: "How many total career medals does Marit Bjørgen hold (the all-time Winter Olympic record)?", a: 15, anecdote: "8 of them gold, 4 silver, 3 bronze. All in cross country skiing events." },
+        { q: "How many years has snowboarding been an official Olympic event?", a: 28, anecdote: "1998 in Nagano, Japan. Shaun White is still the GOAT with 3 gold medals to his name." },
+        { q: "What is the total number of gold medal events scheduled for the Milano Cortina 2026 Games?", a: 116, anecdote: "Ice hockey, figure skating, and snowboarding were the most watched events." },
+        { q: "As of the 2026 Games how many total sports are included in the Winter Olympic program?", a: 16, anecdote: "Skiing (alpine, cross country, freestyle, nordic, jumping, mountaineering); Biathlon; Bobsled; Curling; Hockey; Luge; Skating (figure, speed, short-track); Snowboarding." },
+        { q: "How many years has it been since the first Winter Olympic Games were held?", a: 102, anecdote: "Chamonix, France in 1924. The same year that the summer games were held in Paris, France." },
+        { q: "After a 54 year hiatus, in what year did the Skeleton event return to the Winter Olympics?", a: 2002, anecdote: "It came back in Salt Lake in 2002 and has been a staple ever since." },
+        { q: "How many times has the United States hosted the winter Olympics?", a: 4, anecdote: "Lake Placid, NY (2x); Squaw Valley, CA; SLC, UT" },
+        { q: "In what year did Ski Mountaineering make its official debut as an Olympic sport?", a: 2026, anecdote: "SkiMo is the newest addition to the games." },
+        { q: "In meters, how far away are the shooting targets in the Biathalon?", a: 50, anecdote: "There are cave paintings of people hunting on skis in Norway." },
+        { q: "How many miles was the torch carried for the 2026 Olympics?", a: 7500, anecdote: "The torch traveled through every Italian province on its way to Milan." },
+        { q: "Norway won the most medals of any country in the 2026 winter Olympics. How many total medals did they win?", a: 41, anecdote: "Norway continues to dominate winter sports." },
+        { q: "How many torchbearers were there for the 2026 Olympics?", a: 10001, anecdote: "1 more than Paris, France in 2024." },
+        { q: "In what year did the \"Miracle on Ice\" take place at the Lake Placid Games?", a: 1980, anecdote: "The young US team beat the heavily favored Soviet Union team 4-3." },
+        { q: "How many athletes (to the nearest hundred) competed in the 2026 Winter Games?", a: 2900, anecdote: "The first games had 258; this year is the most ever." },
+        { q: "How many years old was American figure skater Scott Allen when he became the youngest individual male medalist in Winter history?", a: 14, anecdote: "He took bronze 2 days before his birthday in 1964." },
+        { q: "How many seats were in the stadium of the opening ceremonies for the 2026 winter Olympics?", a: 70000, anecdote: "The closing ceremonies were in a roman amphitheater seating 15,000." },
+        { q: "In what year did the Winter and Summer Olympics stop being held in the same calendar year?", a: 1994, anecdote: "Norway started the staggered year." },
+        { q: "What was the total number of nations that competed in the first Winter Olympics in Chamonix, France in 1924?", a: 16, anecdote: "There were 40 nations at the Summer Games that same year." }
+    ];
+
     let myId = sessionStorage.getItem('trivia_myId') || Math.random().toString(36).substring(2, 9);
     sessionStorage.setItem('trivia_myId', myId);
 
@@ -51,10 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------
-    // 2. NETWORK EVENT LISTENER
+    // 3. NETWORK EVENT LISTENER
     // ---------------------------------------------------------
-    // Buffering connectTime by 10s ensures we don't miss our own start event 
-    // due to system clock desync between your computer and Firebase.
     db.ref('trivia_events').orderByChild('timestamp').startAt(connectTime - 10000).on('child_added', (snapshot) => {
         const event = snapshot.val();
         if (event.type === 'GAME_START') hideAllScreens();
@@ -64,27 +86,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------
-    // 3. LOBBY & PLAYER PRESENCE
+    // 4. LOBBY & PLAYER PRESENCE
     // ---------------------------------------------------------
     db.ref('players').on('value', (snapshot) => {
         if (!isLiveMode) return;
         const players = snapshot.val() || {};
         latestPlayerList = Object.keys(players).map(id => ({ id, ...players[id] }));
         
-        // Sort by joinedAt to determine the "Acting Host" (earliest joiner)
-        latestPlayerList.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+        // Safely sort by joinedAt to determine the "Acting Host"
+        latestPlayerList.sort((a, b) => {
+            const timeA = typeof a.joinedAt === 'number' ? a.joinedAt : Date.now();
+            const timeB = typeof b.joinedAt === 'number' ? b.joinedAt : Date.now();
+            return timeA - timeB;
+        });
         
-        // FIX: Check index to see if I am the earliest joiner
         isActingHost = (latestPlayerList.length > 0 && latestPlayerList.id === myId);
 
         if (screens.setup.style.display === "block") {
             renderTeamSelection(latestPlayerList);
             updateLobbyStatus(latestPlayerList);
             
-            // SHOW START BUTTON TO ANY PLAYER ONCE THEY HAVE SELECTED A TEAM
             if (userTeam) {
-                document.getElementById("hostStartGameBtn").style.display = "block";
-                document.getElementById("hostStartGameBtn").textContent = "Start Tournament";
+                const startBtn = document.getElementById("hostStartGameBtn");
+                startBtn.style.display = "block";
+                startBtn.textContent = "Start Tournament";
                 document.getElementById("waitingForGameBtn").style.display = "none";
             }
         }
@@ -150,26 +175,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------
-    // 4. START GAME LOGIC
+    // 5. START GAME LOGIC (FIXED RACE CONDITION)
     // ---------------------------------------------------------
     document.getElementById("hostStartGameBtn").onclick = () => {
+        const startBtn = document.getElementById("hostStartGameBtn");
+        startBtn.disabled = true; // Prevent double clicking
+
         if (isLiveMode) {
             const pending = latestPlayerList.filter(p => !p.team).length;
             if (pending > 0) {
                 const proceed = confirm(`Warning: ${pending} player(s) haven't selected a country yet. Start anyway?`);
-                if (!proceed) return;
+                if (!proceed) {
+                    startBtn.disabled = false;
+                    return;
+                }
             }
-            db.ref('asked_questions').remove();
-        }
-        
-        broadcastEvent('GAME_START');
-        // Only the Acting Host pushes the first question to avoid duplicates
-        if (isActingHost || !isLiveMode) {
-            hostTriggerNextQuestion();
+            
+            // Wait for Firebase to finish deleting before generating the new question
+            db.ref('asked_questions').remove().then(() => {
+                broadcastEvent('GAME_START');
+                triggerNextQuestion();
+            });
+        } else {
+            broadcastEvent('GAME_START');
+            triggerNextQuestion();
         }
     };
 
-    function hostTriggerNextQuestion() {
+    function triggerNextQuestion() {
         db.ref('asked_questions').once('value', (snap) => {
             const asked = snap.val() ? Object.values(snap.val()) : [];
             const remaining = questionsData.filter(q => !asked.includes(q.q));
@@ -182,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------
-    // 5. GAMEPLAY LOGIC
+    // 6. GAMEPLAY & TIMERS
     // ---------------------------------------------------------
     function handleNetworkStartQuestion(payload) {
         currentActiveQuestion = payload;
@@ -209,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 clearInterval(gameLoopInterval);
                 if (!currentRoundResults.find(r => r.team === userTeam)) submitMyAnswer("NONE");
+                // Only Acting Host calculates and broadcasts the round results to keep sync
                 if (isActingHost) setTimeout(generateHostResults, 1200);
             }
         }, 100);
@@ -302,7 +336,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (timer) timer.textContent = sec;
                 if (sec <= 0) { 
                     clearInterval(hostLockInterval); 
-                    if (isActingHost) hostTriggerNextQuestion(); 
+                    // Again, Acting Host safely controls round progression
+                    if (isActingHost) triggerNextQuestion(); 
                 }
             }, 1000);
         } else {
@@ -311,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------
-    // 6. NUMERIC KEYPAD LOGIC
+    // 7. NUMERIC KEYPAD LOGIC
     // ---------------------------------------------------------
     document.querySelectorAll('.num-key').forEach(btn => {
         btn.onclick = () => { document.getElementById('userAnswer').value += btn.dataset.val; };
@@ -320,28 +355,4 @@ document.addEventListener("DOMContentLoaded", () => {
         const inp = document.getElementById('userAnswer');
         inp.value = inp.value.slice(0, -1);
     };
-
-    // ---------------------------------------------------------
-    // 7. QUESTIONS DATA
-    // ---------------------------------------------------------
-    const questionsData = [
-        { q: "How many total career medals does Marit Bjørgen hold (the all-time Winter Olympic record)?", a: 15, anecdote: "8 of them gold, 4 silver, 3 bronze. All in cross country skiing events." },
-        { q: "How many years has snowboarding been an official Olympic event?", a: 28, anecdote: "1998 in Nagano, Japan. Shaun White is still the GOAT with 3 gold medals to his name." },
-        { q: "What is the total number of gold medal events scheduled for the Milano Cortina 2026 Games?", a: 116, anecdote: "Ice hockey, figure skating, and snowboarding were the most watched events." },
-        { q: "As of the 2026 Games how many total sports are included in the Winter Olympic program?", a: 16, anecdote: "Skiing (alpine, cross country, freestyle, nordic, jumping, mountaineering); Biathlon; Bobsled; Curling; Hockey; Luge; Skating (figure, speed, short-track); Snowboarding." },
-        { q: "How many years has it been since the first Winter Olympic Games were held?", a: 102, anecdote: "Chamonix, France in 1924. The same year that the summer games were held in Paris, France." },
-        { q: "After a 54 year hiatus, in what year did the Skeleton event return to the Winter Olympics?", a: 2002, anecdote: "It came back in Salt Lake in 2002 and has been a staple ever since." },
-        { q: "How many times has the United States hosted the winter Olympics?", a: 4, anecdote: "Lake Placid, NY (2x); Squaw Valley, CA; SLC, UT" },
-        { q: "In what year did Ski Mountaineering make its official debut as an Olympic sport?", a: 2026, anecdote: "SkiMo is the newest addition to the games." },
-        { q: "In meters, how far away are the shooting targets in the Biathalon?", a: 50, anecdote: "There are cave paintings of people hunting on skis in Norway." },
-        { q: "How many miles was the torch carried for the 2026 Olympics?", a: 7500, anecdote: "The torch traveled through every Italian province on its way to Milan." },
-        { q: "Norway won the most medals of any country in the 2026 winter Olympics. How many total medals did they win?", a: 41, anecdote: "Norway continues to dominate winter sports." },
-        { q: "How many torchbearers were there for the 2026 Olympics?", a: 10001, anecdote: "1 more than Paris, France in 2024." },
-        { q: "In what year did the \"Miracle on Ice\" take place at the Lake Placid Games?", a: 1980, anecdote: "The young US team beat the heavily favored Soviet Union team 4-3." },
-        { q: "How many athletes (to the nearest hundred) competed in the 2026 Winter Games?", a: 2900, anecdote: "The first games had 258; this year is the most ever." },
-        { q: "How many years old was American figure skater Scott Allen when he became the youngest individual male medalist in Winter history?", a: 14, anecdote: "He took bronze 2 days before his birthday in 1964." },
-        { q: "How many seats were in the stadium of the opening ceremonies for the 2026 winter Olympics?", a: 70000, anecdote: "The closing ceremonies were in a roman amphitheater seating 15,000." },
-        { q: "In what year did the Winter and Summer Olympics stop being held in the same calendar year?", a: 1994, anecdote: "Norway started the staggered year." },
-        { q: "What was the total number of nations that competed in the first Winter Olympics in Chamonix, France in 1924?", a: 16, anecdote: "There were 40 nations at the Summer Games that same year." }
-    ];
 });
